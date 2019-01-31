@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static FILE * __log_file = NULL;
+static FILE* __log_file = NULL;
 static int dirty = 0;
 
 void close_logger()
@@ -15,7 +15,7 @@ void close_logger()
     }
 }
 
-void init_logger(const char *log_file_path)
+void init_logger(const char* log_file_path)
 {
     if (log_file_path == NULL)
     {
@@ -28,7 +28,7 @@ void init_logger(const char *log_file_path)
     atexit(close_logger);
 }
 
-void _slog(char *f,int l,char *msg,...)
+void _slog(char* f,int l,char* msg,...)
 {
     va_list ap;
     dirty = 1;
