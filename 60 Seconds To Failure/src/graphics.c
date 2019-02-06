@@ -1,42 +1,49 @@
 #include <SDL.h>
+#include <SDL_ttf.h>
 
 #include "simple_logger.h"
 #include "graphics.h"
-#include "sprites.h"
 
 //Wrapper for graphics rendering
 typedef struct
 {
 	SDL_Window			*window;
 	SDL_Renderer		*renderer;
+	SDL_Texture			*tex;
+	SDL_Surface			*surface;
+	SDL_Surface			*tempSurface;
 
-	Uint32				frameDelay;
+	float				framerate;
+	SDL_Texture			*fpsTex;
+
+	Uint32				prevTime, curTime, frameDelay;
 
 }Graphics;
-
-
-//temp color wrapper 
-typedef struct
-{
-	Uint32 r;
-	Uint32 g;
-	Uint32 b;
-	Uint32 a;
-}Color;
 
 //local global
 static Graphics graphics;
 
-
 //forward declarations
 void Graphics_Close();
 
-void Graphics_Init(Uint32 winWidth, Uint32 winHeight, Bool fullscreen)
+void GraphicsInit(Uint32 winWidth, Uint32 winHeight, Bool fullscreen, Uint32 fDelay)
 {
 	Uint32 flags = 0;
+	SDL_Rect texRect = { 0 };
 	
 	graphics.window = NULL;
 	graphics.renderer = NULL;
+	graphics.tex = NULL;
+	graphics.surface = NULL;
+	graphics.tempSurface = NULL;
+	graphics.frameDelay = 0;
+	graphics.prevTime = 0;
+	graphics.curTime = 0;
+
+	if (fDelay > 0)
+	{
+		graphics.frameDelay = fDelay;
+	}
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
@@ -72,53 +79,32 @@ void Graphics_Init(Uint32 winWidth, Uint32 winHeight, Bool fullscreen)
 	{
 		slog("SDL window failed to create! %S", SDL_GetError());
 
-		Graphics_Close();
+		GraphicsClose();
 	}
 
-	graphics.renderer = SDL_CreateRenderer(graphics.window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+	graphics.renderer = SDL_CreateRenderer(graphics.window, 
+		-1, 
+		SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
 
 	if (!graphics.renderer)
 	{
 		slog("Renderer was not created: %s", SDL_GetError());
 
-		Graphics_Close();
+		GraphicsClose();
 	}
 
-	SDL_SetRenderDrawColor(graphics.renderer, 16, 64, 192, 255);
-	SDL_RenderClear(graphics.renderer);
-	SDL_RenderPresent(graphics.renderer);
+	ClearScreen();
+
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 	SDL_RenderSetLogicalSize(graphics.renderer, winWidth, winHeight);
 
 	srand(SDL_GetTicks());
 
-	atexit(Graphics_Close);
+	atexit(GraphicsClose);
 	slog("Graphics initialized successfully");
 }
 
-void SetFrameDelay(Uint32 fDelay)
-{
-	graphics.frameDelay = fDelay;
-}
-
-SDL_Texture* LoadImageMedia(const char *filepath)
-{
-	SDL_Texture *tex = NULL;
-	SDL_Surface *img = IMG_Load(filepath);
-
-	if (!img)
-	{
-		slog("Failed to load image: %s", IMG_GetError());
-
-		return NULL;
-	}
-
-	tex = SDL_CreateTextureFromSurface(graphics.renderer, tex);
-
-	return img;
-}
-
-void Graphics_Close()
+void GraphicsClose()
 {
 	if (graphics.renderer)
 	{
@@ -137,3 +123,46 @@ void Graphics_Close()
 	SDL_Quit();
 }
 
+void ClearScreen()
+{
+	SDL_SetRenderDrawColor(graphics.renderer, 16, 64, 192, 255);
+
+	SDL_RenderClear(graphics.renderer);
+}
+
+SDL_Renderer* GetRenderer()
+{
+	return graphics.renderer;
+}
+
+void NextFrame()
+{
+	SDL_RenderPresent(graphics.renderer);
+
+	FrameDelay();
+}
+
+float GetFrameRate()
+{
+	return graphics.framerate;
+}
+
+void FrameDelay()
+{
+	Uint32 diff;
+	graphics.prevTime = graphics.curTime;
+	slog_sync();// make sure logs get written when we have time to write it
+	graphics.curTime = SDL_GetTicks();
+	diff = (graphics.curTime - graphics.prevTime);
+	if (diff < graphics.frameDelay)
+	{
+		SDL_Delay(graphics.frameDelay - diff);
+	}
+	graphics.framerate = 1000.0 / MAX(SDL_GetTicks() - graphics.prevTime, 0.001);
+	slog("FPS: %f", graphics.framerate);
+}
+
+Uint32 GetFrameDelay()
+{
+	return graphics.frameDelay;
+}
