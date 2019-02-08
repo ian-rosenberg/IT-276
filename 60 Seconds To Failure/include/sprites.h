@@ -81,6 +81,7 @@ void ClearAllSprites();
 
 /**
 * @brief Free a specific sprite
+* @param sprite The sprite address to free
 */
 void SpriteDelete(Sprite *sprite);
 
@@ -115,13 +116,6 @@ void DrawAnimatedSprite(
 	Vector4D *colorShift,
 	Uint32 frameDelay,
 	float deltaTime);
-
-/**
-* @brief display the frame rate at 0,0
-* @param anim The animation containing the sprites
-*/
-void DrawFramerate(Animation *anim);
-
 
 /**
 * @brief Create a new sprite if not in use,

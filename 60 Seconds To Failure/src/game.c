@@ -4,6 +4,7 @@
 #include "simple_logger.h"
 #include "sprites.h"
 #include "graphics.h"
+#include "gui.h"
 
 
 int main(int agrc, char *arg[])
@@ -16,6 +17,7 @@ int main(int agrc, char *arg[])
 	Animation* numbers = NULL;
 	Vector2D mousePos = {0};
 	Vector2D mouseScale;
+	Vector4D  bgcolor = { 25, 128, 50, 255 };
 	float prevTime, curTime;
 
 	prevTime = 0;
@@ -29,17 +31,10 @@ int main(int agrc, char *arg[])
 	init_logger("60TF.log");
 	slog("---==== BEGIN ====---");
 
-	GraphicsInit(1280, 720, 0, 16);
-
+	GraphicsInit(1280, 720, 0, 16, bgcolor, 0);
 	SpriteManagerInit(1024);
-
-	numbers =  LoadAnimation("images/numbers.png", 
-		GetRenderer(),
-		27, 
-		35,
-		1, 
-		10,
-		16.0f);
+	gf2d_text_init("config/font.cfg");
+	GUISetupHUD();
 	
 	SDL_ShowCursor(SDL_DISABLE);
 
@@ -50,27 +45,14 @@ int main(int agrc, char *arg[])
 		SDL_PumpEvents();
 		keys = SDL_GetKeyboardState(NULL);
 
-		slog("deltaTime: %f", curTime - prevTime);
-
 		SDL_GetMouseState(&mouseX, &mouseY);
 
 		mousePos.x = mouseX;
 		mousePos.y = mouseY;
-	
-		//draw animated numbers
 
 		ClearScreen();
 
-		/*DrawAnimatedSprite(numbers,
-			mousePos,
-			&mouseScale,
-			NULL,
-			NULL,
-			NULL,
-			GetFrameDelay(),
-			curTime - prevTime);*/
-
-		DrawFramerate(numbers);
+		GUIDrawHUD();
 
 		NextFrame();	
 

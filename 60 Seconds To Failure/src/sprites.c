@@ -167,66 +167,6 @@ void DrawAnimatedSprite(
 }
 
 
-void DrawFramerate(Animation *anim)
-{
-	int fr = GetFrameRate();
-	int tens, ones;
-	SDL_Rect cell1, target1, cell2, target2;
-
-	SDL_RendererFlip flipFlags = SDL_FLIP_NONE;
-	Vector2D scaleFactor = { 1, 1 };
-	Vector2D scaleOffset = { 0, 0 };
-
-	tens = 0;
-	ones = 0;
-
-	tens = ((fr % 100) - (fr % 10)) / 10;
-	ones = (fr % 10);
-
-	gf2d_rect_set(
-		cell1,
-		tens * anim->frameWidth + tens,
-		0,
-		anim->frameWidth,
-		anim->frameHeight);
-	gf2d_rect_set(
-		target1,
-		13.5f,
-		17.5f,
-		anim->frameWidth * scaleFactor.x,
-		anim->frameHeight * scaleFactor.y);
-
-	SDL_RenderCopyEx(GetRenderer(),
-		anim->spriteList->texture,
-		&cell1,
-		&target1,
-		0,
-		NULL, 
-		flipFlags);
-
-
-	gf2d_rect_set(
-		cell2,
-		ones * anim->frameWidth + ones,
-		0,
-		anim->frameWidth,
-		anim->frameHeight);
-	gf2d_rect_set(
-		target2,
-		41.5f,
-		17.5f,
-		anim->frameWidth * scaleFactor.x,
-		anim->frameHeight * scaleFactor.y);
-
-	SDL_RenderCopyEx(GetRenderer(),
-		anim->spriteList->texture,
-		&cell2,
-		&target2,
-		0,
-		NULL,
-		flipFlags);
-}
-
 Sprite* NewSprite()
 {
 	int i;

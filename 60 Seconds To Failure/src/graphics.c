@@ -1,4 +1,3 @@
-#include <SDL.h>
 #include <SDL_ttf.h>
 
 #include "simple_logger.h"
@@ -17,6 +16,19 @@ typedef struct
 	SDL_Texture			*fpsTex;
 
 	Uint32				prevTime, curTime, frameDelay;
+	
+	Uint8				fpsCounter;
+
+	Uint32				w, h;
+
+	Uint32				background_color;
+	Vector4D			background_color_v;
+
+	Sint32				bitdepth;
+	Uint32				rmask;
+	Uint32				gmask;
+	Uint32				bmask;
+	Uint32				amask;
 
 }Graphics;
 
@@ -26,7 +38,7 @@ static Graphics graphics;
 //forward declarations
 void Graphics_Close();
 
-void GraphicsInit(Uint32 winWidth, Uint32 winHeight, Bool fullscreen, Uint32 fDelay)
+void GraphicsInit(Uint32 winWidth, Uint32 winHeight, Bool fullscreen, Uint32 fDelay, Vector4D bgcolor, Uint8 showFPS)
 {
 	Uint32 flags = 0;
 	SDL_Rect texRect = { 0 };
@@ -39,6 +51,7 @@ void GraphicsInit(Uint32 winWidth, Uint32 winHeight, Bool fullscreen, Uint32 fDe
 	graphics.frameDelay = 0;
 	graphics.prevTime = 0;
 	graphics.curTime = 0;
+	graphics.fpsCounter = showFPS;
 
 	if (fDelay > 0)
 	{
@@ -97,6 +110,45 @@ void GraphicsInit(Uint32 winWidth, Uint32 winHeight, Bool fullscreen, Uint32 fDe
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 	SDL_RenderSetLogicalSize(graphics.renderer, winWidth, winHeight);
+
+	graphics.tex = SDL_CreateTexture(
+		graphics.renderer,
+		SDL_PIXELFORMAT_ARGB8888,
+		SDL_TEXTUREACCESS_STREAMING,
+		winWidth, winHeight);
+	if (!graphics.tex)
+	{
+		slog("failed to create screen texture: %s", SDL_GetError());
+		GraphicsClose();
+		return;
+	}
+
+	SDL_PixelFormatEnumToMasks(SDL_PIXELFORMAT_ARGB8888,
+		&graphics.bitdepth,
+		&graphics.rmask,
+		&graphics.gmask,
+		&graphics.bmask,
+		&graphics.amask);
+
+
+	graphics.surface = SDL_CreateRGBSurface(0, winWidth, winHeight, graphics.bitdepth,
+		graphics.rmask,
+		graphics.gmask,
+		graphics.bmask,
+		graphics.amask);
+
+	if (!graphics.surface)
+	{
+		slog("failed to create screen surface: %s", SDL_GetError());
+		GraphicsClose();
+		return;
+	}
+
+	graphics.w = winWidth;
+	graphics.h = winHeight;
+	graphics.background_color = SDL_MapRGB(graphics.surface->format, bgcolor.x, bgcolor.y, bgcolor.z);
+	vector4d_set(graphics.background_color_v, bgcolor.x, bgcolor.y, bgcolor.z, bgcolor.w);
+	SDL_SetRenderDrawBlendMode(GetRenderer(), SDL_BLENDMODE_BLEND);
 
 	srand(SDL_GetTicks());
 
@@ -165,4 +217,43 @@ void FrameDelay()
 Uint32 GetFrameDelay()
 {
 	return graphics.frameDelay;
+}
+
+SDL_Surface *gf2d_graphics_screen_convert(SDL_Surface **surface)
+{
+	SDL_Surface *convert;
+	if (!(*surface))
+	{
+		slog("surface provided was NULL");
+		return NULL;
+	}
+	if (!graphics.surface)
+	{
+		slog("graphics not yet initialized");
+		return NULL;
+	}
+	convert = SDL_ConvertSurface(*surface,
+		graphics.surface->format,
+		0);
+	if (!convert)
+	{
+		slog("failed to convert surface: %s", SDL_GetError());
+		return NULL;
+	}
+	SDL_FreeSurface(*surface);
+	*surface = NULL;
+	return convert;
+}
+
+Vector2D GetRenderDimensions(){
+	Vector2D dim;
+	dim.x = graphics.w;
+	dim.y = graphics.h;
+
+	return dim;
+}
+
+Uint8 GetFPSCounterEnabled()
+{
+	return graphics.fpsCounter;
 }

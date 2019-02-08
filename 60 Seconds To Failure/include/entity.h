@@ -10,10 +10,11 @@
 typedef enum
 {
 	State_Idle,
+	State_Walking,
 	State_Attacking,
 	State_Hurt,
-	State_Dead,
-	State_Walking
+	State_Death,
+	State_Dead
 }EntityState;
 
 typedef struct
@@ -22,13 +23,6 @@ typedef struct
 
 }AnimationState;
 
-typedef enum
-{
-	north, 
-	east, 
-	south, 
-	west
-}Direction;
 
 
 typedef struct Entity_S
