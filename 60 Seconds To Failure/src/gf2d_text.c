@@ -250,7 +250,7 @@ void gf2d_font_draw_line(char *text,Font *font,Color color, Vector2D position)
     vector2d_copy(dst,position);
     dst.w = surface->w;
     dst.h = surface->h;
-    slog("rendering text at position %i,%i",dst.x,dst.y);
+    //slog("rendering text at position %i,%i",dst.x,dst.y);
     SDL_RenderCopy(
         GetRenderer(),
         texture,

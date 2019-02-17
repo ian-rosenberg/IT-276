@@ -23,18 +23,8 @@ typedef struct Sprite_S
 	int _refCount;
 	char* filepath;
 	SDL_Texture *texture;
+	SDL_Surface *surface;
 }Sprite;
-
-typedef struct Animation_S
-{
-	Uint8		length;
-	Uint32		frameWidth, frameHeight, offset;
-
-	float		curFrame;
-	float		timeLeft, timeLeftValue;
-
-	Sprite		*spriteList;
-}Animation;
 
 /**
 * @brief Initialize the sprite manager
@@ -47,32 +37,9 @@ void SpriteManagerInit(Uint32 max);
 * @param path of the file to load
 * @param cellWidth Width of animation cell
 * @param cellHeight Height of the cell
-* @param xOffset The offset between cells
+* @param yOffset The offset between cells
 */
-Sprite* LoadImageToTexture(const char* filepath, 
-	SDL_Renderer *ren,
-	Uint32 cellWidth,
-	Uint32 cellHeight,
-	Uint32 xOffset);
-
-/**
-* @brief Load an image file into an animation
-* @param path of the file to load
-* @param ren The renderer to use
-* @param cellWidth Width of the animation cell
-* @param cellHeight Height of the animation cell
-* @param xOffset The offset in pixels between cells
-* @param frames The number of frames
-* @param msToNext Milliseconds between frames
-* @returns The animation with all the required data
-*/
-Animation* LoadAnimation(const char *filepath,
-	SDL_Renderer *ren,
-	Uint32 cellWidth,
-	Uint32 cellHeight,
-	Uint32 xOffset,
-	Uint32 frames,
-	Uint32 msToNext);
+Sprite* LoadImageToTexture(const char* filepath, SDL_Renderer *ren);
 
 /**
 * @brief Free all sprites tracked by manager
@@ -91,31 +58,39 @@ void SpriteDelete(Sprite *sprite);
 void SpriteManagerClose();
 
 /**
-* @brief Copy texture of static, single sprite object
-* @param tex The texture to copy
-* @param r The renderer to copy to
-* @param pos Position on-screen to render at
+* @brief Draw a sprite given it's spritesheet
+* @param sprite The sprite to draw
+* @param drawPosition The position to draw at
+* @param scale For scaling the sprite's current image
+* @param scaleCenter The pivot for scaling
+* @param rotation The x,y and z rotations
+* @param flip Whether or not to flip the sprite horizontally/vertically
+* @param colorShift Change the color of a sprite
+* @param frame The frame we are currently on
+* @param yOffset The offset in the x axis between sprites of an animation
+* @param frameWidth The cell/frame width per sprite
+* @param frameHeight The cell/frame height per sprite
 */
-void DrawSprite(SDL_Texture *tex, SDL_Renderer *r, Vector2D pos);
-
-/**
-* @brief Render an animated sprite
-* @param sprite The sprite info
-* @param position Where to draw on-screen
-* @param scale The x/y scale value
-* @param pivot Pivot for the scale/rotation
-* @param flip The axis in which to flip the sprite over
-* @param colorShift The color to shift the sprite to
-*/
-void DrawAnimatedSprite(
-	Animation *anim,
-	Vector2D position,
+void DrawSprite(Sprite *sprite,
+	Vector2D drawPosition,
 	Vector2D *scale,
-	Vector2D *pivot,
+	Vector2D *scaleCenter,
+	Vector3D *rotation,
 	Vector2D *flip,
 	Vector4D *colorShift,
-	Uint32 frameDelay,
-	float deltaTime);
+	Uint32 frame,
+	Uint32 yOffset,
+	Uint32 frameWidth,
+	Uint32 frameHeight);
+
+/**
+* @brief Draw a single image to screen
+* @param image The image to draw
+* @param position The position to draw at
+* @param width The width of the image
+* @param height The image's height
+*/
+void DrawSpriteImage(Sprite *image, Vector2D position, Uint32 width, Uint32 height);
 
 /**
 * @brief Create a new sprite if not in use,
@@ -123,12 +98,5 @@ void DrawAnimatedSprite(
 * @returns A new or currently loaded sprite to reference
 */
 Sprite* NewSprite();
-
-/**
-* @brief Clean up all sprites in an animation
-* @param anim The animation to clean up
-*/
-void DeleteAnimation(Animation *anim);
-
 
 #endif

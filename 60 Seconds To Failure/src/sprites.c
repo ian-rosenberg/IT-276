@@ -37,47 +37,56 @@ void SpriteManagerInit(Uint32 max)
 
 Sprite* LoadImageToTexture(const char *filepath, SDL_Renderer *ren)
 {
-	Sprite *s = NewSprite();
-	s->texture = IMG_LoadTexture(ren, filepath);
+	Sprite *sprite = NULL;
+	SDL_Surface *s = NULL; 
+	
+	sprite = NewSprite();
 
-	if (!s->texture)
-	{
-		slog("Failed to load image: %s", IMG_GetError());
-
+	if (!sprite)
+	{	
 		return NULL;
 	}
 
-	s->filepath = filepath;
-	s->_refCount++;
+	s = IMG_Load(filepath);
 
-	return s;
-}
+	if (!s)
+	{
+		slog("Failed to load image: %s, %s", filepath, IMG_GetError());
+		SpriteDelete(sprite);
+		return NULL;
+	}
 
-Animation* LoadAnimation(const char* filepath, 
-	SDL_Renderer *ren, 
-	Uint32 cellW, 
-	Uint32 cellH, 
-	Uint32 xOffset, 
-	Uint32 frames, 
-	Uint32 msToNext)
-{
-	Animation* newAnim = (Animation*)malloc(sizeof(Animation));
-	newAnim->spriteList = (Sprite *)malloc(sizeof(Sprite)*frames);
+	s = gf2d_graphics_screen_convert(&s);
 
-	newAnim->curFrame = 0;
-	newAnim->length = frames;
-	newAnim->timeLeft = msToNext;
-	newAnim->timeLeftValue = msToNext;
-	newAnim->frameHeight = cellH;
-	newAnim->frameWidth = cellW;
-	newAnim->offset = xOffset;
+	if (!s)
+	{
+		slog("Failed to load image: %s, %s", filepath, IMG_GetError());
+		SpriteDelete(sprite);
+		return NULL;
+	}
 
-	newAnim->spriteList = LoadImageToTexture(filepath, ren);
+	sprite->texture = SDL_CreateTextureFromSurface(GetRenderer(), s);
 	
-	return newAnim;
+	if (!sprite->texture)
+	{
+		slog("Failed to load image: %s, %s", filepath, IMG_GetError());
+		SpriteDelete(sprite);
+		return NULL;
+	}
+	
+	SDL_SetTextureBlendMode(sprite->texture, SDL_BLENDMODE_BLEND);
+	SDL_UpdateTexture(sprite->texture,
+		NULL,
+		s->pixels,
+		s->pitch);
+
+	sprite->filepath = filepath;
+	sprite->_refCount++;
+
+	SDL_FreeSurface(s);
+
+	return sprite;
 }
-
-
 
 void ClearAllSprites()
 {
@@ -91,11 +100,16 @@ void ClearAllSprites()
 
 void SpriteDelete(Sprite *sprite)
 {
-	if (!sprite)
+	if (sprite == NULL)
 	{
 		return;
 	}
-	
+
+	if (sprite->surface != NULL)
+	{
+		SDL_FreeSurface(sprite->surface);
+	}
+
 	if (sprite->texture != NULL)
 	{
 		SDL_DestroyTexture(sprite->texture);
@@ -108,24 +122,17 @@ void SpriteManagerClose()
 	ClearAllSprites();
 }
 
-void DrawSprite(SDL_Texture *tex, SDL_Renderer *r, Vector2D pos, float deltaTime)
-{
-	SDL_Rect dest;
-	dest.x = pos.x;
-	dest.y = pos.y;
-
-	SDL_RenderCopy(r, tex, NULL, &dest);
-}
-
-void DrawAnimatedSprite(
-	Animation *anim,
-	Vector2D position,
+void DrawSprite(Sprite *sprite,
+	Vector2D drawPosition,
 	Vector2D *scale,
-	Vector2D *pivot,
+	Vector2D *scaleCenter,
+	Vector3D *rotation,
 	Vector2D *flip,
 	Vector4D *colorShift,
-	Uint32 frameDelay,
-	float deltaTime)
+	Uint32 frame,
+	Uint32 offset,
+	Uint32 frameWidth,
+	Uint32 frameHeight)
 {
 	SDL_Rect cell, target;
 	SDL_RendererFlip flipFlags = SDL_FLIP_NONE;
@@ -133,39 +140,106 @@ void DrawAnimatedSprite(
 	Vector2D scaleFactor = { 1, 1 };
 	Vector2D scaleOffset = { 0, 0 };
 
-	anim->timeLeft -= deltaTime;
-	if (anim->timeLeft <= 0)
+	if (!sprite)
 	{
-		anim->timeLeft = anim->timeLeftValue;
-		++anim->curFrame;
-		if (anim->curFrame >= anim->length)
-		{
-			anim->curFrame = 0;
-		}
+		return;
+	}
+	if (scale != NULL)
+	{
+		vector2d_copy(scaleFactor, (*scale));
+	}
+	else
+	{
+		vector2d_copy(scaleFactor, (vector2d(1,1)));
+	}
+	if (scaleCenter != NULL)
+	{
+		vector2d_copy(scaleOffset, (*scaleCenter));
+	}
+	else
+	{
+		vector2d_copy(scaleOffset, (vector2d(0.5f, 0.5f)));
+	}
+	if (rotation != NULL)
+	{
+		vector2d_copy(r, (*rotation));
+		r.x *= scaleFactor.x;
+		r.y *= scaleFactor.y;
+	}
+	else
+	{
+		vector2d_copy(r, vector2d(0, 1));
+	}
+
+	if (flip)
+	{
+		if (flip->x)flipFlags |= SDL_FLIP_HORIZONTAL;
+		if (flip->y)flipFlags |= SDL_FLIP_VERTICAL;
+	}
+	else
+	{
+		flipFlags = SDL_FLIP_NONE;
+	}
+
+	if (colorShift)
+	{
+		SDL_SetTextureColorMod(
+			sprite->texture,
+			colorShift->x,
+			colorShift->y,
+			colorShift->z);
+		SDL_SetTextureAlphaMod(
+			sprite->texture,
+			colorShift->w);
 	}
 
 	gf2d_rect_set(
 		cell,
-		(int)anim->curFrame * anim->frameWidth + (int)anim->curFrame,
-		0,
-		anim->frameWidth,
-		anim->frameHeight);
+		0 ,
+		(frameHeight * (int)frame),
+		frameWidth,
+		frameHeight);
 	gf2d_rect_set(
 		target,
-		position.x - (scaleFactor.x * scaleOffset.x),
-		position.y - (scaleFactor.y * scaleOffset.y),
-		anim->frameWidth * scaleFactor.x,
-		anim->frameHeight * scaleFactor.y);
-	
+		drawPosition.x - (scaleFactor.x * scaleOffset.x),
+		drawPosition.y - (scaleFactor.y * scaleOffset.y),
+		frameWidth * scaleFactor.x,
+		frameHeight * scaleFactor.y);
 	SDL_RenderCopyEx(GetRenderer(),
-		anim->spriteList->texture,
+		sprite->texture,
 		&cell,
 		&target,
-		0, 
-		NULL,
+		rotation ? rotation->z : 0,
+		rotation ? &r : NULL,
 		flipFlags);
+	if (colorShift)
+	{
+		SDL_SetTextureColorMod(
+			sprite->texture,
+			255,
+			255,
+			255);
+		SDL_SetTextureAlphaMod(
+			sprite->texture,
+			255);
+	}
 }
 
+void DrawSpriteImage(Sprite *image, Vector2D position, Uint32 width, Uint32 height)
+{
+	DrawSprite(
+		image,
+		position,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		0,
+		0,
+		width,
+		height);
+}
 
 Sprite* NewSprite()
 {
@@ -203,16 +277,5 @@ Sprite* NewSprite()
 	return NULL;
 }
 
-void DeleteAnimation(Animation *anim)
-{
-	int i;
-
-	for (i = 0; i < anim->length; ++i)
-	{
-		SpriteDelete(&anim->spriteList[i]);
-	}
-
-	memset(&anim->spriteList, 0, sizeof(Sprite) * anim->length);
-}
 
 

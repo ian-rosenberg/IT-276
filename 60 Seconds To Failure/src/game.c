@@ -2,9 +2,9 @@
 #include <stdio.h>
 
 #include "simple_logger.h"
-#include "sprites.h"
 #include "graphics.h"
 #include "gui.h"
+#include "player.h"
 
 
 int main(int agrc, char *arg[])
@@ -13,8 +13,6 @@ int main(int agrc, char *arg[])
 	SDL_Event e;
 	const Uint8 *keys;
 	int mouseX, mouseY;
-	Sprite* bobby = NULL;
-	Animation* numbers = NULL;
 	Vector2D mousePos = {0};
 	Vector2D mouseScale;
 	Vector4D  bgcolor = { 25, 128, 50, 255 };
@@ -31,12 +29,18 @@ int main(int agrc, char *arg[])
 	init_logger("60TF.log");
 	slog("---==== BEGIN ====---");
 
-	GraphicsInit(1280, 720, 0, 16, bgcolor, 0);
+	GraphicsInit(1280, 720, 0, 16, bgcolor);
 	SpriteManagerInit(1024);
+	AnimationManagerInit(1024);
 	gf2d_text_init("config/font.cfg");
 	GUISetupHUD();
+	ActorManagerInit(1024);
+	EntityManagerInit(1024);
 	
+	PlayerInit();
+
 	SDL_ShowCursor(SDL_DISABLE);
+	
 
 	while (!done)
 	{
@@ -49,8 +53,14 @@ int main(int agrc, char *arg[])
 
 		mousePos.x = mouseX;
 		mousePos.y = mouseY;
+		
+		EntityThinkAll();
+
+		EntityUpdateAll();
 
 		ClearScreen();
+
+		EntityDrawAll();
 
 		GUIDrawHUD();
 

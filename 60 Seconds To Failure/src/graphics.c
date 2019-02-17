@@ -16,8 +16,6 @@ typedef struct
 	SDL_Texture			*fpsTex;
 
 	Uint32				prevTime, curTime, frameDelay;
-	
-	Uint8				fpsCounter;
 
 	Uint32				w, h;
 
@@ -51,7 +49,6 @@ void GraphicsInit(Uint32 winWidth, Uint32 winHeight, Bool fullscreen, Uint32 fDe
 	graphics.frameDelay = 0;
 	graphics.prevTime = 0;
 	graphics.curTime = 0;
-	graphics.fpsCounter = showFPS;
 
 	if (fDelay > 0)
 	{
@@ -95,9 +92,7 @@ void GraphicsInit(Uint32 winWidth, Uint32 winHeight, Bool fullscreen, Uint32 fDe
 		GraphicsClose();
 	}
 
-	graphics.renderer = SDL_CreateRenderer(graphics.window, 
-		-1, 
-		SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+	graphics.renderer = SDL_CreateRenderer(graphics.window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
 
 	if (!graphics.renderer)
 	{
@@ -211,7 +206,7 @@ void FrameDelay()
 		SDL_Delay(graphics.frameDelay - diff);
 	}
 	graphics.framerate = 1000.0 / MAX(SDL_GetTicks() - graphics.prevTime, 0.001);
-	slog("FPS: %f", graphics.framerate);
+	//slog("FPS: %f", graphics.framerate);
 }
 
 Uint32 GetFrameDelay()
@@ -251,9 +246,4 @@ Vector2D GetRenderDimensions(){
 	dim.y = graphics.h;
 
 	return dim;
-}
-
-Uint8 GetFPSCounterEnabled()
-{
-	return graphics.fpsCounter;
 }

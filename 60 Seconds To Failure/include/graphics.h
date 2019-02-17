@@ -13,9 +13,8 @@
 * @param fullscreen Trigger fullscreen mode or not
 * @param fDelay the delay, in milliseconds, between frames.
 * @param bgcolor The background color to render
-* @param showFPS Whether or not to display the FPS counter
 */
-void GraphicsInit(Uint32 winWidth, Uint32 winHeight, Bool fullscreen, Uint32 fDelay, Vector4D bgcolor, Uint8 showFPS);
+void GraphicsInit(Uint32 winWidth, Uint32 winHeight, Bool fullscreen, Uint32 fDelay, Vector4D bgcolor);
 
 /**
 * @brief Exit SDL and close all subsystems
