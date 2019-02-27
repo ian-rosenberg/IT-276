@@ -35,15 +35,17 @@ void SpriteManagerInit(Uint32 max)
 	atexit(SpriteManagerClose);
 }
 
-Sprite* LoadImageToTexture(const char *filepath, SDL_Renderer *ren)
+Sprite* LoadImageToTexture(char *filepath, SDL_Renderer *ren)
 {
-	Sprite *sprite = NULL;
-	SDL_Surface *s = NULL; 
+	slog("Attempting to load %s...", filepath);
 	
+	Sprite *sprite = NULL;
+	SDL_Surface *s = NULL;
+
 	sprite = NewSprite();
 
 	if (!sprite)
-	{	
+	{
 		return NULL;
 	}
 
@@ -60,20 +62,20 @@ Sprite* LoadImageToTexture(const char *filepath, SDL_Renderer *ren)
 
 	if (!s)
 	{
-		slog("Failed to load image: %s, %s", filepath, IMG_GetError());
+		slog("Failed to convert image: %s, %s", filepath, IMG_GetError());
 		SpriteDelete(sprite);
 		return NULL;
 	}
 
 	sprite->texture = SDL_CreateTextureFromSurface(GetRenderer(), s);
-	
+
 	if (!sprite->texture)
 	{
-		slog("Failed to load image: %s, %s", filepath, IMG_GetError());
+		slog("Failed to convert to texture: %s, %s", filepath, IMG_GetError());
 		SpriteDelete(sprite);
 		return NULL;
 	}
-	
+
 	SDL_SetTextureBlendMode(sprite->texture, SDL_BLENDMODE_BLEND);
 	SDL_UpdateTexture(sprite->texture,
 		NULL,
@@ -83,7 +85,27 @@ Sprite* LoadImageToTexture(const char *filepath, SDL_Renderer *ren)
 	sprite->filepath = filepath;
 	sprite->_refCount++;
 
+	SDL_LockSurface(s);
+
+	sprite->width = s->pitch;
+	sprite->height = s->h;
+
+	SDL_UnlockSurface(s);
+
 	SDL_FreeSurface(s);
+
+	return sprite;
+}
+
+Sprite* LoadImageToTextureWithDimensions(char *filepath, SDL_Renderer *ren, Vector3D dim)
+{
+	Sprite * sprite = NULL;
+	
+	sprite = LoadImageToTexture(filepath, ren);
+
+	sprite->width = dim.x;
+	sprite->height = dim.y;
+	sprite->bodyRadius = dim.z;
 
 	return sprite;
 }
@@ -173,8 +195,8 @@ void DrawSprite(Sprite *sprite,
 
 	if (flip)
 	{
-		if (flip->x)flipFlags |= SDL_FLIP_HORIZONTAL;
-		if (flip->y)flipFlags |= SDL_FLIP_VERTICAL;
+		if (flip->x)flipFlags = (SDL_RendererFlip)(flipFlags | SDL_FLIP_HORIZONTAL);
+		if (flip->y)flipFlags = (SDL_RendererFlip)(flipFlags | SDL_FLIP_VERTICAL);
 	}
 	else
 	{
@@ -205,6 +227,7 @@ void DrawSprite(Sprite *sprite,
 		drawPosition.y - (scaleFactor.y * scaleOffset.y),
 		frameWidth * scaleFactor.x,
 		frameHeight * scaleFactor.y);
+
 	SDL_RenderCopyEx(GetRenderer(),
 		sprite->texture,
 		&cell,
@@ -275,6 +298,74 @@ Sprite* NewSprite()
 	slog("Out of sprite address space");
 
 	return NULL;
+}
+
+SDL_Color* GetPixelDataFromFile(char* file)
+{
+	int x, y;
+	SDL_PixelFormat *fmt;
+	SDL_Surface *surf = NULL;
+	SDL_Color *pixels = NULL;
+	int bpp;
+
+	surf = IMG_Load(file);
+
+	SDL_LockSurface(surf);
+
+	fmt = surf->format; 
+	bpp = surf->format->BytesPerPixel;
+
+	pixels = (SDL_Color*)malloc(sizeof(SDL_Color) * surf->pitch * surf->h);
+	memset(pixels, 0, sizeof(SDL_Color)* surf->pitch * surf->h);
+
+	for (y = 0; y < surf->h; y++)
+	{
+		for (x = 0; x < surf->w; x++)
+		{
+			SDL_GetRGB(GetPixel(surf, x, y), 
+				fmt, 
+				&pixels[(y * surf->w + x)].r, 
+				&pixels[(y * surf->w + x)].g,
+				&pixels[(y * surf->w + x)].b);
+		}
+	}
+
+	SDL_UnlockSurface(surf);
+	SDL_FreeSurface(surf);
+
+	return pixels;
+}
+
+//from SDL docs
+Uint32 GetPixel(SDL_Surface *surface, int x, int y)
+{
+	int bpp = surface->format->BytesPerPixel;
+	/* Here p is the address to the pixel we want to retrieve */
+	Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+
+	switch (bpp) {
+	case 1:
+		return *p;
+		break;
+
+	case 2:
+		return *(Uint16 *)p;
+		break;
+
+	case 3:
+		if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+			return p[0] << 16 | p[1] << 8 | p[2];
+		else
+			return p[0] | p[1] << 8 | p[2] << 16;
+		break;
+
+	case 4:
+		return *(Uint32 *)p;
+		break;
+
+	default:
+		return 0;       /* shouldn't happen, but avoids warnings */
+	}
 }
 
 

@@ -4,7 +4,6 @@
 Credits: https://opengameart.org/users/buch for overworld sprites
 		 https://opengameart.org/users/eris for interior sprites
 		 https://opengameart.org/users/balmer & Stephen Challener (Redshrike) for boss sprites
-		 https://opengameart.org/users/surt for pipes
 */
 
 
@@ -21,7 +20,9 @@ Credits: https://opengameart.org/users/buch for overworld sprites
 typedef struct Sprite_S
 {
 	int _refCount;
-	char* filepath;
+	Uint32 width, height;
+	float bodyRadius;
+	const char* filepath;
 	SDL_Texture *texture;
 	SDL_Surface *surface;
 }Sprite;
@@ -35,11 +36,17 @@ void SpriteManagerInit(Uint32 max);
 /**
 * @brief Load an image file
 * @param path of the file to load
-* @param cellWidth Width of animation cell
-* @param cellHeight Height of the cell
-* @param yOffset The offset between cells
+* @param dimData The dimensions data to load a specific rect
+* @returns A sprite containing the texture and its dimensions
 */
-Sprite* LoadImageToTexture(const char* filepath, SDL_Renderer *ren);
+Sprite* LoadImageToTextureWithDimensions(char* filepath, SDL_Renderer *ren, Vector3D dimData);
+
+/**
+* @brief Load an image file
+* @param path of the file to load
+* @returns A sprite containing the texture
+*/
+Sprite* LoadImageToTexture(char* filepath, SDL_Renderer *ren);
 
 /**
 * @brief Free all sprites tracked by manager
@@ -99,4 +106,17 @@ void DrawSpriteImage(Sprite *image, Vector2D position, Uint32 width, Uint32 heig
 */
 Sprite* NewSprite();
 
+/**
+* @brief Get a sprite's surface for creating tilemap from pixel data
+* @param sprite The sprite to load via it's filepath into a surface
+* @returns The colors to work with
+*/
+SDL_Color* GetPixelDataFromFile(Sprite* sprite);
+/**
+* @brief Get pixel data given coordinates
+* @param surface The surface to get pixel from
+* @param x The x pos
+* @param y The y pos
+*/
+Uint32 GetPixel(SDL_Surface *surface, int x, int y);
 #endif

@@ -26,14 +26,14 @@ void ActorManagerClose(void)
 	actorManager.actors = NULL;
 	actorManager.maxActors = 0;
 
-	slog("animation list system closed");
+	slog("actor list system closed");
 }
 
 void ActorManagerInit(Uint32 max)
 {
 	if (!max)
 	{
-		slog("cannot init animation manager for zero animations");
+		slog("cannot init actor manager for zero actors");
 		return;
 	}
 
@@ -98,7 +98,7 @@ Actor* NewActor(Uint32 numAnim)
 			return act;
 		}
 	}
-	slog("error: out of animation manager's addresses");
+	slog("error: out of actor manager's addresses");
 	return NULL;
 }
 
@@ -194,38 +194,47 @@ Actor* LoadActor(char *filename)
 			if (strcmp(buf, "scale:") == 0)
 			{
 				fscanf(file, "%lf,%lf", &animations->scale.x, &animations->scale.y);
+				continue;
 			}
 			if (strcmp(buf, "colorSpecial:") == 0)
 			{
 				fscanf(file, "%lf,%lf,%lf,%lf", &animations->colorSpecial.x, &animations->colorSpecial.y, &animations->colorSpecial.z, &animations->colorSpecial.w);
+				continue;
 			}
 			if (strcmp(buf, "yOffset:") == 0)
 			{
 				fscanf(file, "%i", &animations->yOffset);
+				continue;
 			}
 			if (strcmp(buf, "name:") == 0)
 			{
 				fscanf(file, "%s", &animations->name);
+				continue;
 			}
 			if (strcmp(buf, "filename:") == 0)
 			{
 				fscanf(file, "%s", &animations->filepath);
+				continue;
 			}
 			if (strcmp(buf, "length:") == 0)
 			{
 				fscanf(file, "%i", &animations->length);
+				continue;
 			}
 			if (strcmp(buf, "frameWidth:") == 0)
 			{
 				fscanf(file, "%i", &animations->cellWidth);
+				continue;
 			}
 			if (strcmp(buf, "frameHeight:") == 0)
 			{
 				fscanf(file, "%i", &animations->cellHeight);
+				continue;
 			}
 			if (strcmp(buf, "frameRate:") == 0)
 			{
 				fscanf(file, "%f", &animations->frameRate);
+				continue;
 			}
 			if (strcmp(buf, "type:") == 0)
 			{
@@ -290,5 +299,27 @@ void FreeActor(Actor *actor)
 	}
 
 	memset(actor, 0, sizeof(Actor));
+}
+
+Vector2D GetAverageActorDimensions(Actor *actor)
+{
+	int i;
+	Vector2D maxDim = { 0 };
+	Vector2D minDim = { 0 };
+	Vector2D avgDim = { 0 };
+
+	for (i = 0; i < actor->numAnimations; ++i)
+	{
+		maxDim.x = MAX(actor->animations[i].cellWidth, maxDim.x);
+		maxDim.y = MAX(actor->animations[i].cellHeight, maxDim.y);
+
+		minDim.x = MIN(actor->animations[i].cellWidth, minDim.x);
+		minDim.y = MIN(actor->animations[i].cellHeight, minDim.y);
+	}
+
+	avgDim.x = (maxDim.x - minDim.x) / 2;
+	avgDim.y = (maxDim.y - minDim.y) / 2;
+
+	return avgDim;
 }
 

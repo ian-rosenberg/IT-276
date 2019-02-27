@@ -2,6 +2,7 @@
 #include "graphics.h"
 #include "gf2d_text.h"
 #include "gf2d_shape.h"
+#include "gf2d_draw.h"
 
 typedef struct
 {

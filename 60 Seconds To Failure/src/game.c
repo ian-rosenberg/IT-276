@@ -5,19 +5,20 @@
 #include "graphics.h"
 #include "gui.h"
 #include "player.h"
+#include "tilemap.h"
 
 
 int main(int agrc, char *arg[])
 {
 	Bool done = false;
 	SDL_Event e;
+	TileMap *map;
 	const Uint8 *keys;
 	int mouseX, mouseY;
 	Vector2D mousePos = {0};
 	Vector2D mouseScale;
 	Vector4D  bgcolor = { 25, 128, 50, 255 };
 	float prevTime, curTime;
-
 	prevTime = 0;
 	curTime = 0;
 
@@ -36,7 +37,13 @@ int main(int agrc, char *arg[])
 	GUISetupHUD();
 	ActorManagerInit(1024);
 	EntityManagerInit(1024);
+	TileInit(65536);
+	TileMapInit(256);
+
+	map = LoadOverworldTileMapFromFile("config/overworld.cfg");
 	
+	//Load level
+
 	PlayerInit();
 
 	SDL_ShowCursor(SDL_DISABLE);
@@ -59,6 +66,8 @@ int main(int agrc, char *arg[])
 		EntityUpdateAll();
 
 		ClearScreen();
+
+		DrawOverworldTileMap(map);
 
 		EntityDrawAll();
 

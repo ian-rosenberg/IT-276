@@ -7,9 +7,18 @@ static Player player = { 0 };
 
 void PlayerInit()
 {
+	Vector3D dimensions = { 0 };
+	Vector2D widthHeight = { 0 };
+
 	Actor *playerActor = LoadActor("data/player.actor");
 
 	player.self = NewEntity(playerActor);
+
+	widthHeight = GetAverageActorDimensions(playerActor);
+
+	dimensions = vector3d(widthHeight.x, widthHeight.y, 1.0f);
+
+	//player.self->physBody = NewBodyInfo(dimensions, GetCurrentWorldSpace(), false);
 
 	player.self->maxHealth = 100.0f;
 	player.self->health = player.self->maxHealth;

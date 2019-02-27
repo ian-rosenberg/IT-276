@@ -20,3 +20,11 @@ frameWidth: 50
 frameHeight: 82
 frameRate: 0.085
 type: loop
+
+name: attack
+filename: images/Player/playerPunch.png
+length: 9
+frameWidth: 74
+frameHeight: 81
+frameRate: 0.05
+type: once

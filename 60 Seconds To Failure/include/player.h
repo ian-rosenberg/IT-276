@@ -14,6 +14,8 @@ typedef struct Player_S
 	float				sensitivity;
 	float				maxSpeed;
 
+
+
 	int32_t				axisLeftXLock;
 	int32_t				axisLeftYLock;
 	int32_t				axisRightXLock;

@@ -2,6 +2,7 @@
 #define	__ENTITY__
 
 #include "actor.h"
+#include "physicsbodies.h"
 
 typedef struct Entity_S
 {
@@ -11,6 +12,8 @@ typedef struct Entity_S
 	State					logicalState; // Same enum as used for animations, used here for logic of those states
 
 	Actor					*actor;
+
+	BodyInfo				*physBody;
 
 	Vector2D				velocity;
 	Vector2D				position;
@@ -51,9 +54,10 @@ void EntityManagerClose();
 Entity* NewEntity(Actor* act);
 
 /**
-* @brief free an entity
+* @brief Free an entity
+* @param self Entity to free
 */
-void FreeEntity();
+void FreeEntity(Entity* self);
 
 /**
 * @brief Render an entity to screen

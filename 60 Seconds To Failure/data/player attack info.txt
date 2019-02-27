@@ -1,7 +1,0 @@
-name: attack
-filename: playerPunch.png
-length: 8
-frameWidth: 50
-frameHeight: 82
-frameRate: 0.75
-type: once

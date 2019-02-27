@@ -86,4 +86,10 @@ void ClearAllActors(void);
 */
 void ActorManagerClose(void);
 
+/**
+* @brief Retrieve the average width and height
+* of the sprites across all animations
+* @param actor The actor whose attributes we get
+*/
+Vector2D GetAverageActorDimensions(Actor *actor);
 #endif
