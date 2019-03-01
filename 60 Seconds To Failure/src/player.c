@@ -1,5 +1,6 @@
 #include "player.h"
 #include "simple_logger.h"
+#include "camera.h"
 
 const int JOYSTICK_DEAD_ZONE = 8000;
 
@@ -32,7 +33,7 @@ void PlayerInit()
 	player.self->flip = vector2d(0, 0);
 	player.self->scale = vector2d(1, 1);
 
-	player.self->position = vector2d(0, 0);
+	player.self->position = vector2d(640, 360);
 
 	player.self->actor = playerActor;
 
@@ -240,6 +241,8 @@ void PlayerUpdate(Entity *self)
 				break;
 		}
 	}
+
+	camera_set_position(player.self->position);
 }
 
 void PlayerFree()

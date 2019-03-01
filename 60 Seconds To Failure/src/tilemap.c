@@ -227,57 +227,52 @@ TileMap* LoadOverworldTileMapFromFile(char* filename)
 		//3 tile types
 		for (i = 0; i < TILE_TYPES; ++i)
 		{
-			if (strncmp(buf, tileNames[i], strlen(tileNames[i]) ) != 0)
+			if (strncmp(buf, tileNames[i], strlen(tileNames[i])) != 0)
 			{
 				continue;
 			}
-				if (j >= map->numCells)
-				{
-					flag = true;
-					break;
-				}
-
-				fscanf(file, "%i,%i,%i",
-					&tileTypes[j].mappingColor.r,
-					&tileTypes[j].mappingColor.g,
-					&tileTypes[j].mappingColor.b);
-				
-				tileTypes[j].tileType = i;
-				tileTypes[j].tileGroup = j % 10;
-				tileTypes[j].offsetInColumn = (i * 10) + (j % 10);
-
-				slog("%i",tileTypes[j].offsetInColumn = (i * 10) + (j % 10));
-
-				++j;
-		}
-	}
-		
-	for (y = 0; y < map->numRows; ++y)
-	{
-		for (x = 0; x < map->numColumns; ++x)
-		{
-			for (ite = 0; ite < map->numCells; ++ite)
+			if (j >= map->numCells)
 			{
-				if ((colors + (y*map->numRows) + x)->r == 0
-					&& (colors + (y*map->numRows) + x)->g == 0
-					&& (colors + (y*map->numRows) + x)->b == 0)
-				{
-					map->overworld[x][y].active = false;
-					
-					continue;
-				}
-				else
-				{
-					map->overworld[x][y] = *NewTile(tileTypes[ite].offsetInColumn, map->overworldSpriteSheet);
-					map->overworld[x][y].active = true;
-					map->overworld[x][y].color = *(colors + (y*map->numRows) + x);
+				flag = true;
+				break;
+			}
 
-					break;
+			fscanf(file, "%i,%i,%i",
+				&tileTypes[j].mappingColor.r,
+				&tileTypes[j].mappingColor.g,
+				&tileTypes[j].mappingColor.b);
+
+			for (y = 0; y < map->numRows; ++y)
+			{
+				for (x = 0; x < map->numColumns; ++x)
+				{
+					for (ite = 0; ite < map->numCells; ++ite)
+					{
+						if ((colors + (y*map->numColumns) + x)->r == 0
+							&& (colors + (y*map->numColumns) + x)->g == 0
+							&& (colors + (y*map->numColumns) + x)->b == 0)
+						{
+							map->overworld[x][y].active = false;
+
+							continue;
+						}
+						else if (colors[(y*map->numColumns) + x].r == tileTypes[ite + 1].mappingColor.r
+							&& colors[(y*map->numColumns) + x].g == tileTypes[ite + 1].mappingColor.g
+							&& colors[(y*map->numColumns) + x].b == tileTypes[ite + 1].mappingColor.b)
+						{
+							map->overworld[x][y] = *NewTile(ite + 1, map->overworldSpriteSheet);
+							map->overworld[x][y].active = true;
+
+							break;
+						}
+					}
+
+					map->currentTileFilled.x++;
+					map->currentTileFilled.y++;
 				}
-			}				
-			
-			map->currentTileFilled.x++;
-			map->currentTileFilled.y++;
+			}
+
+			++j;
 		}
 	}
 

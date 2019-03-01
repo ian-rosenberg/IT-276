@@ -6,6 +6,7 @@
 #include "gui.h"
 #include "player.h"
 #include "tilemap.h"
+#include "camera.h"
 
 
 int main(int agrc, char *arg[])
@@ -39,7 +40,8 @@ int main(int agrc, char *arg[])
 	EntityManagerInit(1024);
 	TileInit(65536);
 	TileMapInit(256);
-
+	camera_set_dimensions(0, 0, 1280, 720);
+	camera_set_bounds(0, 0, 64 * 32, 64 * 32);
 	map = LoadOverworldTileMapFromFile("config/overworld.cfg");
 	
 	//Load level
