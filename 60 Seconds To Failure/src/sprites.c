@@ -89,6 +89,7 @@ Sprite* LoadImageToTexture(char *filepath, SDL_Renderer *ren)
 
 	sprite->width = s->pitch;
 	sprite->height = s->h;
+	sprite->pixelFmt = s->format->format;
 
 	SDL_UnlockSurface(s);
 
@@ -105,7 +106,7 @@ Sprite* LoadImageToTextureWithDimensions(char *filepath, SDL_Renderer *ren, Vect
 
 	sprite->width = dim.x;
 	sprite->height = dim.y;
-	sprite->bodyRadius = dim.z;
+	//maybe use a body radius one day
 
 	return sprite;
 }
@@ -248,6 +249,13 @@ void DrawSprite(Sprite *sprite,
 	}
 }
 
+void TextureDraw(SDL_Texture* tex)
+{
+	SDL_Rect destRect = { 0 };
+
+	SDL_RenderCopy(GetRenderer(), tex, NULL, &destRect);
+}
+
 void DrawSpriteImage(Sprite *image, Vector2D position, Uint32 width, Uint32 height)
 {
 	DrawSprite(
@@ -279,6 +287,10 @@ Sprite* NewSprite()
 		if (spriteManager.spriteList[i]._refCount == 0 && spriteManager.spriteList[i].texture == NULL)
 		{
 			spriteManager.spriteList[i]._refCount = 1;
+			spriteManager.spriteList[i].surface = NULL;
+			spriteManager.spriteList[i].texture = NULL;
+			spriteManager.spriteList[i].pixelFmt = 0;
+
 			return &spriteManager.spriteList[i];
 		}
 	}
@@ -291,6 +303,10 @@ Sprite* NewSprite()
 			SpriteDelete(&spriteManager.spriteList[i]);
 
 			spriteManager.spriteList[i]._refCount = 1;
+			spriteManager.spriteList[i].surface = NULL;
+			spriteManager.spriteList[i].texture = NULL;
+			spriteManager.spriteList[i].pixelFmt = 0;
+
 			return &spriteManager.spriteList[i];
 		}
 	}
@@ -368,5 +384,21 @@ Uint32 GetPixel(SDL_Surface *surface, int x, int y)
 	}
 }
 
+SDL_Texture* CreateBlankTexture(int width, int height, Uint32 fmt)
+{
+	SDL_Texture *tex = NULL;
+
+	tex = SDL_CreateTexture(GetRenderer(), fmt, SDL_TEXTUREACCESS_TARGET, width, height);
+	
+	if (!tex)
+	{
+		printf("Unable to create blank texture! SDL Error: %s\n", SDL_GetError());
+	
+		return NULL;
+	}
+
+	slog("Created a blank target texture");
+	return tex;
+}
 
 

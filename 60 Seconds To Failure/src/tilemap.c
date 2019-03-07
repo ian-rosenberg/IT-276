@@ -3,6 +3,7 @@
 #include "tilemap.h"
 #include "graphics.h"
 #include "simple_logger.h"
+#include "sprites.h"
 
 #define TILE_TYPES 3
 
@@ -112,7 +113,7 @@ TileMap* NewTileMap(Uint32 width, Uint32 height)
 			tilemapManager.tilemaps[i].overworldName = NULL;
 			tilemapManager.tilemaps[i].shelterName = NULL;
 			tilemapManager.tilemaps[i].bossAreaName = NULL;
-
+			tilemapManager.tilemaps[i].overworldRenderTarget = NULL;
 
 			return &tilemapManager.tilemaps[i];
 		}
@@ -130,7 +131,8 @@ TileMap* LoadOverworldTileMapFromFile(char* filename)
 	char colorMap[512];
 	TileMap *map = NULL;
 	Uint32 x, y, ite, col, row;
-	Uint32* pixelData;
+	Uint32* pixelData = NULL;
+	Uint32  pixelFmt = 0;
 	Bool flag = false;
 	int i, j;
 	SDL_Color *colors;
@@ -181,8 +183,17 @@ TileMap* LoadOverworldTileMapFromFile(char* filename)
 			{
 				fscanf(file, "%64s", &map->overworldName);
 
-				tileTypes->sprite = LoadImageToTexture(&map->overworldName, GetRenderer());
-				map->overworldSpriteSheet = tileTypes->sprite;
+				map->overworldSpriteSheet = LoadImageToTexture(&map->overworldName, GetRenderer());
+
+				/*if (!SDL_QueryTexture(map->overworldSpriteSheet, &map->overworldSpriteSheet->pixelFmt, , NULL, NULL))
+				{
+					slog("Failed to get pixel format");
+				}*/
+
+				map->overworldRenderTarget = CreateBlankTexture(map->cellWidth * map->numColumns,
+					map->cellHeight * map->numRows,
+					map->overworldSpriteSheet->pixelFmt);
+
 				continue;
 			}
 			if (strcmp(buf, "shelter:") == 0)
@@ -275,6 +286,8 @@ TileMap* LoadOverworldTileMapFromFile(char* filename)
 			++j;
 		}
 	}
+
+	RenderOverworldToTexture(map);
 
 	fclose(file);
 
@@ -371,7 +384,7 @@ void TileMapDelete(TileMap *map)
 	}
 }
 
-void DrawOverworldTileMap(TileMap *map)
+void RenderOverworldToTexture(TileMap *map)
 {
 	Vector4D col = vector4d(1, 1, 1, 1);
 	Vector2D scale;
@@ -383,6 +396,8 @@ void DrawOverworldTileMap(TileMap *map)
 	scale = vector2d(1, 1);
 	scaleCenter =  vector2d(map->cellWidth / 2, map->cellHeight / 2);
 	flip = vector2d(0, 0);
+
+	SDL_SetRenderTarget(GetRenderer(), map->overworldRenderTarget);
 
 	for (y = 0; y < map->numRows; ++y)
 	{
@@ -406,5 +421,23 @@ void DrawOverworldTileMap(TileMap *map)
 				map->cellHeight);
 		}
 	}
+
+
+
+	SDL_SetRenderTarget(GetRenderer(), NULL);
+}
+
+
+void DrawOverworld(TileMap *map)
+{
+	Vector4D col = vector4d(1, 1, 1, 1);
+	Vector2D scale;
+	Vector2D scaleCenter;
+	Vector2D flip;
+	Vector3D rot = { 0, 0, 0 };
+
+	SDL_RenderCopy(GetRenderer(), map->overworldRenderTarget, NULL, NULL);
+
+	
 }
 

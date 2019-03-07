@@ -76,5 +76,4 @@ Vector2D GetRenderDimensions();
 * @returns either 0 for failure or 1 for success
 */
 Uint8 GetFPSCounterEnabled();
-
 #endif

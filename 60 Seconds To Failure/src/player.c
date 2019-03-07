@@ -1,6 +1,5 @@
 #include "player.h"
 #include "simple_logger.h"
-#include "camera.h"
 
 const int JOYSTICK_DEAD_ZONE = 8000;
 
@@ -38,7 +37,7 @@ void PlayerInit()
 	player.self->actor = playerActor;
 
 	player.controller = SDL_GameControllerOpen(0);
-	player.maxSpeed = 1.0f;
+	player.maxSpeed = 5.0f;
 
 	player.self->actor->animState = State_Idle;
 	player.self->logicalState = State_Idle;
@@ -241,8 +240,6 @@ void PlayerUpdate(Entity *self)
 				break;
 		}
 	}
-
-	camera_set_position(player.self->position);
 }
 
 void PlayerFree()

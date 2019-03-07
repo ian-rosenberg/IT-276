@@ -2,18 +2,18 @@
 #include <stdio.h>
 
 #include "simple_logger.h"
-#include "graphics.h"
 #include "gui.h"
 #include "player.h"
 #include "tilemap.h"
-#include "camera.h"
+#include "worlds.h"
+#include "graphics.h"
 
 
 int main(int agrc, char *arg[])
 {
 	Bool done = false;
 	SDL_Event e;
-	TileMap *map;
+	World *overworld;
 	const Uint8 *keys;
 	int mouseX, mouseY;
 	Vector2D mousePos = {0};
@@ -39,13 +39,9 @@ int main(int agrc, char *arg[])
 	ActorManagerInit(1024);
 	EntityManagerInit(1024);
 	TileInit(65536);
-	TileMapInit(256);
-	camera_set_dimensions(0, 0, 1280, 720);
-	camera_set_bounds(0, 0, 64 * 32, 64 * 32);
-	map = LoadOverworldTileMapFromFile("config/overworld.cfg");
-	
-	//Load level
-
+	TileMapInit(512);
+	WorldManagerInit(256);
+	overworld = WorldInit("config/overworld.cfg", "");
 	PlayerInit();
 
 	SDL_ShowCursor(SDL_DISABLE);
@@ -69,7 +65,7 @@ int main(int agrc, char *arg[])
 
 		ClearScreen();
 
-		DrawOverworldTileMap(map);
+		DrawOverworld(overworld->world);
 
 		EntityDrawAll();
 

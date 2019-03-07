@@ -61,6 +61,7 @@ typedef struct
 
 	Tile			**overworld;
 	Sprite			*overworldSpriteSheet;
+	Sprite			*overworldRenderTarget;
 
 	Tile			*sideView;
 	Sprite			*sideViewSprite;
@@ -130,11 +131,17 @@ void TileDelete(Tile* tile);
 * @brief Draw a tilemap
 * @param the map to draw
 */
-void DrawOverworldTileMap(TileMap *map);
+void DrawOverworld(TileMap *map);
 
 /**
 * @brief Retrieve the current tilemap
 * @returns the current overworld's tilemap
 */
 TileMap* GetCurrentTileMap();
+
+/**
+* @brief Render the entire overworld to a render target texture
+* @param map The map to use
+*/
+void RenderOverworldToTexture(TileMap *map);
 #endif

@@ -25,6 +25,7 @@ typedef struct Sprite_S
 	const char* filepath;
 	SDL_Texture *texture;
 	SDL_Surface *surface;
+	Uint32 pixelFmt;
 }Sprite;
 
 /**
@@ -119,4 +120,20 @@ SDL_Color* GetPixelDataFromFile(Sprite* sprite);
 * @param y The y pos
 */
 Uint32 GetPixel(SDL_Surface *surface, int x, int y);
+
+/**
+* @brief Create a blank texture to render to
+* @param width Width of the tilemap to bake
+* @param height Height of the tilemap to bake
+* @param fmt The format of the file to write to this texture
+* @returns An SDL_Texture that is ready to target
+*/
+SDL_Texture* CreateBlankTexture(int width, int height, Uint32 fmt);
+
+/**
+* @brief Get the pixel format of a file
+* @param file The file to use
+* @returns a Uint32 representing the pixel format
+*/
+Uint32 GetPixelFormat(char *file);
 #endif

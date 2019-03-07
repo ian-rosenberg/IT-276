@@ -2,7 +2,7 @@
 #define __PHYSICSBODIES__
 
 #include "gf2d_vector.h"
-//#include <chipmunk/chipmunk.h>
+//#include "chipmunk/chipmunk.h"
 #include <SDL.h>
 #include <stdlib.h>
 #include <stdio.h>
