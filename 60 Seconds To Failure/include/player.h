@@ -9,12 +9,14 @@
 typedef struct Player_S
 {
 	TextLine			name;
-	Entity*				self;
+	Entity				*self;
+	Entity				*owner;
+
 	SDL_GameController	*controller;
 	float				sensitivity;
 	float				maxSpeed;
 
-
+	Vector3D			dimensions;
 
 	int32_t				axisLeftXLock;
 	int32_t				axisLeftYLock;
@@ -54,4 +56,9 @@ void PlayerUpdate(Entity *self);
 */
 void PlayerFree();
 
+/**
+* @brief Set the owner of an entity
+* @param owner The entity to assign as owner
+*/
+void PlayerSetOwner(Entity *owner);
 #endif

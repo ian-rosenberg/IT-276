@@ -1,7 +1,7 @@
 #include "worlds.h"
 #include "simple_logger.h"
 
-typedef struct LevelManager_S
+typedef struct WorldManager_S
 {
 	World *worldList;
 
@@ -47,9 +47,9 @@ World* WorldInit(char *oFilename, char *sFilename)
 
 	world = NewWorld();
 	
-	world->world = LoadOverworldTileMapFromFile(oFilename);
-	world->pixelWidth = world->world->numColumns * world->world->cellWidth;
-	world->pixelHeight = world->world->numRows * world->world->cellHeight;
+	world->overworld = LoadTileMapFromFile(oFilename);
+	world->pixelWidth = world->overworld->numColumns * world->overworld->cellWidth;
+	world->pixelHeight = world->overworld->numRows * world->overworld->cellHeight;
 
 	return world;
 }
@@ -60,7 +60,7 @@ World* NewWorld()
 
 	for (i = 0; i < worldManager.maxWorlds; i++)
 	{
-		if ((worldManager.worldList[i]._inUse == 0) && (worldManager.worldList[i].world == NULL))
+		if ((worldManager.worldList[i]._inUse == 0) && (worldManager.worldList[i].overworld == NULL))
 		{
 			return &worldManager.worldList[i];
 		}

@@ -102,6 +102,50 @@ Actor* NewActor(Uint32 numAnim)
 	return NULL;
 }
 
+Actor* NewActorByName(char *name)
+{
+	int i;
+	Actor* act = NULL;
+
+	for (i = 0; i < actorManager.maxActors; i++)
+	{
+		if (actorManager.actors[i]._inUse == 0 || actorManager.actors[i]._inUse == NULL)
+		{
+			memset(&actorManager.actors[i], 0, sizeof(Actor));
+
+			*actorManager.actors[i].name = name;
+
+			act = &actorManager.actors[i];
+
+			slog("reusing actor");
+			act->_inUse = 1;
+
+			return act;
+		}
+	}
+
+	/*find an unused actor address and clean up the old data*/
+	for (i = 0; i < actorManager.maxActors; i++)
+	{
+		if (actorManager.actors[i]._inUse == 0)
+		{
+			memset(&actorManager.actors[i], 0, sizeof(Actor));
+
+			*actorManager.actors[i].name = name;
+
+			act = &actorManager.actors[i];
+
+			act->_inUse = 1;
+
+			slog("cleaned up old actor");
+
+			return act;
+		}
+	}
+	slog("error: out of actor manager's addresses");
+	return NULL;
+}
+
 void DeleteActor(Actor *actor)
 {
 	int i;

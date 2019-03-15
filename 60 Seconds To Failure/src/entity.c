@@ -88,6 +88,8 @@ Entity* NewEntity(Actor* act)
 			ent->Update = EntityUpdate;
 
 			ent->Free = EntityDelete;
+
+			ent->renderTarget = NULL;
 			
 			++entityManager.numEntities;
 
@@ -124,8 +126,6 @@ void FreeEntity(Entity *self)
 
 void EntityDraw(Entity *self)
 {
-	//Vector2D drawPos;
-
 	if (!self)
 	{
 		return;
@@ -135,8 +135,6 @@ void EntityDraw(Entity *self)
 	{
 		return;
 	}
-
-	//draw based on cmaera coords
 
 	//draw entity's particle emitter
 	DrawSpriteImage(self->actor->currentSprite, self->position, self->actor->currentAnimation->cellWidth, self->actor->currentAnimation->cellHeight);

@@ -1,20 +1,16 @@
 #ifndef __WORLDS__
 #define __WORLDS__
 
-#include "physicsbodies.h"
 #include "tilemap.h"
 
 typedef struct World_S
 {
 	Uint8 _inUse;
 
-	//cpSpace *levelSpace;
-
-	//BodyInfo *levelBody;
-
 	Uint32 pixelWidth, pixelHeight;
 
-	TileMap	*world;
+	TileMap	*overworld;
+	TileMap *sideViews;
 }World;
 
 /**

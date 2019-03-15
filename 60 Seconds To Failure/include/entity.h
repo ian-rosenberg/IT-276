@@ -2,7 +2,6 @@
 #define	__ENTITY__
 
 #include "actor.h"
-#include "physicsbodies.h"
 
 typedef struct Entity_S
 {
@@ -13,7 +12,7 @@ typedef struct Entity_S
 
 	Actor					*actor;
 
-	BodyInfo				*physBody;
+	SDL_Rect				boundingBox, srcRect;
 
 	Vector2D				velocity;
 	Vector2D				position;
@@ -33,6 +32,8 @@ typedef struct Entity_S
 
 	float					health;
 	int						maxHealth;
+
+	SDL_Texture				*renderTarget;
 }Entity;
 
 /**

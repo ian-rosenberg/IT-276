@@ -26,15 +26,24 @@ typedef struct{
 
 /**
 * @brief Intialize the actor list on a per actor basis
+* @param max The max number of actors to load
 * @param max The max number of actors to be simultaneously loaded
 */
 void ActorManagerInit(Uint32 max);
 
 /**
 * @brief Get a new actor list
+* @param numAnim The number of animations to allocate
 * @returns an unused/unreferenced actor list
 */
 Actor* NewActor(Uint32 numAnim);
+
+/**
+* @brief Get a new actor list
+* @param name Name of the actor
+* @returns an unused/unreferenced actor list
+*/
+Actor* NewActorByName(char *name);
 
 /**
 * @brief Delete an actor from memory
@@ -47,7 +56,7 @@ void DeleteActor(Actor *actor);
 * @param filename The file to check against
 * @returns The actor in question
 */
-Actor* GetActorByName(char* name);
+Actor* GetActorByName(char *name);
 
 /**
 * @brief Load an actor from file
@@ -62,7 +71,7 @@ Actor* LoadActor(char *file);
 * @param actor The actor to modify
 * @param name The animation's name to use
 */
-void SetActorAnimation(Actor *actor, char* name);
+void SetActorAnimation(Actor *actor, char *name);
 
 /**
 * @brief Based on the actor's current action set the next frame and return type
@@ -74,7 +83,7 @@ void ActorNextFrame(Actor *actor);
 * @brief Free an individual actor
 * @param actor The actor to free
 */
-void FreeActor(Actor* actor);
+void FreeActor(Actor *actor);
 
 /**
 * @brief Delete all actors

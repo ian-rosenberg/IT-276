@@ -1,5 +1,7 @@
 #include "player.h"
+#include "tilemap.h"
 #include "simple_logger.h"
+#include "camera.h"
 
 const int JOYSTICK_DEAD_ZONE = 8000;
 
@@ -18,7 +20,7 @@ void PlayerInit()
 
 	dimensions = vector3d(widthHeight.x, widthHeight.y, 1.0f);
 
-	//player.self->physBody = NewBodyInfo(dimensions, GetCurrentWorldSpace(), false);
+	player.dimensions = dimensions;
 
 	player.self->maxHealth = 100.0f;
 	player.self->health = player.self->maxHealth;
@@ -30,20 +32,21 @@ void PlayerInit()
 	player.self->velocity = vector2d(0, 0);
 
 	player.self->flip = vector2d(0, 0);
-	player.self->scale = vector2d(1, 1);
+	player.self->scale = vector2d(0.75f, 0.75f);
 
 	player.self->position = vector2d(640, 360);
 
 	player.self->actor = playerActor;
 
 	player.controller = SDL_GameControllerOpen(0);
-	player.maxSpeed = 5.0f;
+	player.maxSpeed = 2.5f;
 
 	player.self->actor->animState = State_Idle;
 	player.self->logicalState = State_Idle;
 
 	player.self->actor->currentAnimation = GetAnimationByName("idle");
 	player.self->actor->currentSprite = player.self->actor->currentAnimation->sprite;
+	player.owner = NULL;
 
 	player.self->actor->currentAnimation->currentFrame = 0.0f;
 }
@@ -55,6 +58,9 @@ Entity* GetPlayerEntity()
 
 void PlayerThink(Entity *self)
 {
+	
+	SetCameraPosition(self->position);
+
 	if (player.controller != 0 && SDL_GameControllerGetAttached(player.controller)) {
 		Vector2D LeftStick = vector2d(SDL_GameControllerGetAxis(player.controller, SDL_CONTROLLER_AXIS_LEFTX),
 							SDL_GameControllerGetAxis(player.controller, SDL_CONTROLLER_AXIS_LEFTY));
@@ -103,8 +109,8 @@ void PlayerThink(Entity *self)
 		}
 
 		//Move player according to left stick
-		self->velocity.x = LeftStick.x*0.000010f;
-		self->velocity.y = LeftStick.y*0.000010f;
+		self->velocity.x = LeftStick.x*0.0010f;
+		self->velocity.y = LeftStick.y*0.0010f;
 
 		if (self->velocity.x > player.maxSpeed) {
 			self->velocity.x = player.maxSpeed;
@@ -152,6 +158,7 @@ void PlayerThink(Entity *self)
 void PlayerDraw(Entity *self)
 {
 	Vector2D centerScalePoint;
+	Vector2D resultPos = { 0 };
 
 	if (!self)
 	{
@@ -175,8 +182,10 @@ void PlayerDraw(Entity *self)
 	centerScalePoint = vector2d(self->actor->currentAnimation->cellWidth / 2.0f,
 		self->actor->currentAnimation->cellHeight / 2.0f);
 
+	vector2d_sub(resultPos, self->position, GetCameraPosition());
+
 	DrawSprite(self->actor->currentSprite,
-		self->position,
+		resultPos,
 		&self->scale,
 		&centerScalePoint,
 		&self->rotation,
@@ -193,6 +202,8 @@ void PlayerDraw(Entity *self)
 
 void PlayerUpdate(Entity *self)
 {
+	Vector2D tilemapDimensions = GetCurrentTileMapDimensions(player.owner);
+	
 	if (!self)
 	{
 		return;
@@ -215,10 +226,24 @@ void PlayerUpdate(Entity *self)
 			player.self->flip.x = 0;
 		}
 
-		player.self->position.x += player.self->velocity.x;
-		player.self->position.y += player.self->velocity.y;
+		self->position.x += self->velocity.x;
+		self->position.y += self->velocity.y;
 	}
 
+	
+	slog("Player pos:(%f,%f) TileMap :(%f,%f)", self->position.x, self->position.y, tilemapDimensions.x, tilemapDimensions.y);
+	//slog("Player's owner %s", player.owner->actor->name);
+	if (self->position.x < 0 || self->position.x + player.dimensions.x > GetCurrentTileMapDimensions(player.owner).x)
+	{
+		self->position.x -= self->velocity.x;
+	}
+
+	if (self->position.y < 0 || self->position.y + player.dimensions.y > GetCurrentTileMapDimensions(player.owner).y)
+	{
+		self->position.y -= self->velocity.y;
+	}
+
+	
 	//set anim state
 	if (self->logicalState != self->actor->animState)
 	{
@@ -227,13 +252,13 @@ void PlayerUpdate(Entity *self)
 			case State_Walking:
 				self->logicalState = self->actor->animState;
 				self->actor->currentSprite = self->actor->currentAnimation->sprite;
-				self->scaleCenter = vector2d(self->actor->currentAnimation->cellWidth, self->actor->currentAnimation->cellHeight);
+				self->scaleCenter = vector2d(self->actor->currentAnimation->cellWidth/2, self->actor->currentAnimation->cellHeight/2);
 				break;
 
 			case State_Idle:
 				self->logicalState = self->actor->animState;
 				self->actor->currentSprite = self->actor->currentAnimation->sprite; 
-				self->scaleCenter = vector2d(self->actor->currentAnimation->cellWidth, self->actor->currentAnimation->cellHeight); 
+				self->scaleCenter = vector2d(self->actor->currentAnimation->cellWidth/2, self->actor->currentAnimation->cellHeight/2); 
 				break;
 
 			default:
@@ -245,5 +270,20 @@ void PlayerUpdate(Entity *self)
 void PlayerFree()
 {
 	SDL_GameControllerClose(player.controller);
+}
+
+void PlayerSetOwner(Entity *owner)
+{
+	if (!player.self)
+	{
+		return;
+	}
+
+	if (!owner)
+	{
+		return;
+	}
+
+	player.owner = owner;
 }
 

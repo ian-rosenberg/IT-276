@@ -5,8 +5,7 @@
 #include "sprites.h"
 #include "gf2d_types.h"
 #include "gf2d_vector.h"
-#include "physicsbodies.h"
-
+#include "entity.h"
 
 typedef enum {
 	Ground = 0,
@@ -50,29 +49,31 @@ typedef struct
 
 	Uint8			_inUse;
 
-	//cpSpace			*levelSpace;
+	Uint32			maxEntities;
+	Entity			*entityList;
 
-	//BodyInfo		*levelBody;
+	Entity			*self;
 	
 	Vector2D		spawnPos, bossPos;
 	Vector2D		*shelterPositions;
 
 	Vector2D		currentTileFilled;
 
-	Tile			**overworld;
-	Sprite			*overworldSpriteSheet;
-	Sprite			*overworldRenderTarget;
+	Tile			**map;
+	Sprite			*mapSpriteSheet;
 
-	Tile			*sideView;
-	Sprite			*sideViewSprite;
+	//Tile			*sideView;
+	//Sprite			*sideViewSprite;
 
-	Sprite			*shelter;
+	//Sprite			*shelter;
 	
-	Sprite			*bossArea;
+	//Sprite			*bossArea;
 
-	char			*overworldName;
-	char			*shelterName;
-	char			*bossAreaName;
+	char			*mapName;
+	//char			*shelterName;
+	//char			*bossAreaName;
+
+	SDL_Rect		srcRect;
 }TileMap;
 
 /**
@@ -86,6 +87,12 @@ void TileMapInit(Uint32 max);
 * @param max The number of tiles to support
 */
 void TileInit(Uint32 max);
+
+/**
+* @brief Init the tilemap's entities
+* @param map The map to add enemies to
+*/
+void TileInitEntities(Uint32 max, TileMap* map);
 
 /**
 * @brief Find and add an unused/referenced tilemap to use
@@ -113,13 +120,13 @@ void TileMapManagerClose();
 * @param filename The file to load
 * @returns a tilemap loaded from the specified file
 */
-TileMap* LoadOverworldTileMapFromFile(char* filename);
+TileMap* LoadTileMapFromFile(char* filename);
 
 /**
 * @brief Memset and free a tilemap
-* @param map The tilemap to delete
+* @param mapEntity The tilemap to delete
 */
-void TileMapDelete(TileMap *map);
+void TileMapDelete(Entity *mapEntity);
 
 /**
 * @brief Delete a tile
@@ -131,11 +138,11 @@ void TileDelete(Tile* tile);
 * @brief Draw a tilemap
 * @param the map to draw
 */
-void DrawOverworld(TileMap *map);
+void DrawMap(TileMap *map);
 
 /**
 * @brief Retrieve the current tilemap
-* @returns the current overworld's tilemap
+* @returns the current map's tilemap
 */
 TileMap* GetCurrentTileMap();
 
@@ -143,5 +150,18 @@ TileMap* GetCurrentTileMap();
 * @brief Render the entire overworld to a render target texture
 * @param map The map to use
 */
-void RenderOverworldToTexture(TileMap *map);
+void RenderMapToTexture(TileMap *map);
+
+/**
+* @brief Add to the entity list of the current tilemap
+* @param ent The entity to add
+* @returns true on success false on failure
+*/
+Bool AddEntityToTileMap(Entity *ent, TileMap* map);
+
+/**
+* @brief Retrieve the current map's dimensions
+* @param owner The map to get dimensions of
+*/
+Vector2D GetCurrentTileMapDimensions(Entity *owner);
 #endif

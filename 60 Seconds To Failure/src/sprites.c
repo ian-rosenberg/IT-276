@@ -249,13 +249,6 @@ void DrawSprite(Sprite *sprite,
 	}
 }
 
-void TextureDraw(SDL_Texture* tex)
-{
-	SDL_Rect destRect = { 0 };
-
-	SDL_RenderCopy(GetRenderer(), tex, NULL, &destRect);
-}
-
 void DrawSpriteImage(Sprite *image, Vector2D position, Uint32 width, Uint32 height)
 {
 	DrawSprite(

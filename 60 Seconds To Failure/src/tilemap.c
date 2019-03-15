@@ -4,6 +4,7 @@
 #include "graphics.h"
 #include "simple_logger.h"
 #include "sprites.h"
+#include "camera.h"
 
 #define TILE_TYPES 3
 
@@ -65,7 +66,7 @@ void TileInit(Uint32 max)
 
 TileMap* NewTileMap(Uint32 width, Uint32 height)
 {
-	int i, j, k, x, y;
+	int i, j, x, y;
 
 	if (!tilemapManager.maxMaps)
 	{
@@ -85,11 +86,11 @@ TileMap* NewTileMap(Uint32 width, Uint32 height)
 		{
 			tilemapManager.tilemaps[i]._inUse = 1;
 			tilemapManager.tilemaps[i].currentTileFilled = vector2d(-1, -1);
-			tilemapManager.tilemaps[i].overworld = malloc(sizeof(Tile*)* height);
+			tilemapManager.tilemaps[i].map = malloc(sizeof(Tile*)* height);
 
 			for (j = 0; j < height; ++j)
 			{
-				tilemapManager.tilemaps[i].overworld[j] = malloc(width * sizeof (Tile));
+				tilemapManager.tilemaps[i].map[j] = malloc(width * sizeof (Tile));
 			}
 
 
@@ -98,22 +99,27 @@ TileMap* NewTileMap(Uint32 width, Uint32 height)
 				for (x = 0; x < width; ++x)
 
 				{
-					tilemapManager.tilemaps[i].overworld[x][y].color = (SDL_Color){ 0, 0, 0, 0 };
-					tilemapManager.tilemaps[i].overworld[x][y].mappingColor = (SDL_Color){ 0, 0, 0, 0 };
-					tilemapManager.tilemaps[i].overworld[x][y].offsetInColumn = 0;
-					tilemapManager.tilemaps[i].overworld[x][y].sprite = NULL;
-					tilemapManager.tilemaps[i].overworld[x][y].tileGroup = -1;
-					tilemapManager.tilemaps[i].overworld[x][y].tileType = -1;
-					tilemapManager.tilemaps[i].overworld[x][y]._refCount = 1;
+					tilemapManager.tilemaps[i].map[x][y].color = (SDL_Color){ 0, 0, 0, 0 };
+					tilemapManager.tilemaps[i].map[x][y].mappingColor = (SDL_Color){ 0, 0, 0, 0 };
+					tilemapManager.tilemaps[i].map[x][y].offsetInColumn = 0;
+					tilemapManager.tilemaps[i].map[x][y].sprite = NULL;
+					tilemapManager.tilemaps[i].map[x][y].tileGroup = -1;
+					tilemapManager.tilemaps[i].map[x][y].tileType = -1;
+					tilemapManager.tilemaps[i].map[x][y]._refCount = 1;
 				}
 			}
 
 			tilemapManager.tilemaps[i].numColumns = width;
 			tilemapManager.tilemaps[i].numRows = height;
-			tilemapManager.tilemaps[i].overworldName = NULL;
-			tilemapManager.tilemaps[i].shelterName = NULL;
-			tilemapManager.tilemaps[i].bossAreaName = NULL;
-			tilemapManager.tilemaps[i].overworldRenderTarget = NULL;
+			tilemapManager.tilemaps[i].mapName = NULL;
+			tilemapManager.tilemaps[i].self = NewEntity(NewActorByName("Overworld"));
+			tilemapManager.tilemaps[i].self->renderTarget = NULL;
+			
+
+			tilemapManager.tilemaps[i].self->Think = NULL;
+			tilemapManager.tilemaps[i].self->Update = NULL;
+			tilemapManager.tilemaps[i].self->Draw = DrawMap;
+			tilemapManager.tilemaps[i].self->Free = NULL;
 
 			return &tilemapManager.tilemaps[i];
 		}
@@ -124,15 +130,13 @@ TileMap* NewTileMap(Uint32 width, Uint32 height)
 	return NULL;	
 }
 
-TileMap* LoadOverworldTileMapFromFile(char* filename)
+TileMap* LoadTileMapFromFile(char* filename)
 {
 	FILE * file;
 	char buf[512];
 	char colorMap[512];
 	TileMap *map = NULL;
 	Uint32 x, y, ite, col, row;
-	Uint32* pixelData = NULL;
-	Uint32  pixelFmt = 0;
 	Bool flag = false;
 	int i, j;
 	SDL_Color *colors;
@@ -181,33 +185,28 @@ TileMap* LoadOverworldTileMapFromFile(char* filename)
 			}
 			if (strcmp(buf, "groundTiles:") == 0)
 			{
-				fscanf(file, "%64s", &map->overworldName);
+				fscanf(file, "%64s", &map->mapName);
 
-				map->overworldSpriteSheet = LoadImageToTexture(&map->overworldName, GetRenderer());
+				map->mapSpriteSheet = LoadImageToTexture(&map->mapName, GetRenderer());
 
-				/*if (!SDL_QueryTexture(map->overworldSpriteSheet, &map->overworldSpriteSheet->pixelFmt, , NULL, NULL))
-				{
-					slog("Failed to get pixel format");
-				}*/
-
-				map->overworldRenderTarget = CreateBlankTexture(map->cellWidth * map->numColumns,
+				map->self->renderTarget = CreateBlankTexture(map->cellWidth * map->numColumns,
 					map->cellHeight * map->numRows,
-					map->overworldSpriteSheet->pixelFmt);
+					map->mapSpriteSheet->pixelFmt);
 
 				continue;
 			}
 			if (strcmp(buf, "shelter:") == 0)
 			{
-				fscanf(file, "%64s", &map->shelterName);
+				//fscanf(file, "%64s", &map->shelterName);
 
-				map->shelter = LoadImageToTexture(&map->shelterName, GetRenderer());
+				//map->shelter = LoadImageToTexture(&map->shelterName, GetRenderer());
 				continue;
 			}
 			if (strcmp(buf, "boss:") == 0)
 			{
-				fscanf(file, "%64s", &map->bossAreaName);
+				//fscanf(file, "%64s", &map->bossAreaName);
 
-				map->bossArea = LoadImageToTexture(&map->bossAreaName, GetRenderer());
+				//map->bossArea = LoadImageToTexture(&map->bossAreaName, GetRenderer());
 				continue;
 			}
 			if (strcmp(buf, "tilemap:") == 0)
@@ -263,7 +262,7 @@ TileMap* LoadOverworldTileMapFromFile(char* filename)
 							&& (colors + (y*map->numColumns) + x)->g == 0
 							&& (colors + (y*map->numColumns) + x)->b == 0)
 						{
-							map->overworld[x][y].active = false;
+							map->map[x][y].active = false;
 
 							continue;
 						}
@@ -271,8 +270,8 @@ TileMap* LoadOverworldTileMapFromFile(char* filename)
 							&& colors[(y*map->numColumns) + x].g == tileTypes[ite + 1].mappingColor.g
 							&& colors[(y*map->numColumns) + x].b == tileTypes[ite + 1].mappingColor.b)
 						{
-							map->overworld[x][y] = *NewTile(ite + 1, map->overworldSpriteSheet);
-							map->overworld[x][y].active = true;
+							map->map[x][y] = *NewTile(ite + 1, map->mapSpriteSheet);
+							map->map[x][y].active = true;
 
 							break;
 						}
@@ -287,7 +286,17 @@ TileMap* LoadOverworldTileMapFromFile(char* filename)
 		}
 	}
 
-	RenderOverworldToTexture(map);
+	map->self->boundingBox.h = map->numRows * map->cellHeight;
+	map->self->boundingBox.w = map->numColumns * map->cellWidth;
+	map->self->boundingBox.x = 0;
+	map->self->boundingBox.y = 0;
+
+	map->self->srcRect.x = 0;
+	map->self->srcRect.y = 0;
+	map->self->srcRect.w = GetRenderDimensions().x;
+	map->self->srcRect.h = GetRenderDimensions().y;
+
+	RenderMapToTexture(map);
 
 	fclose(file);
 
@@ -376,17 +385,16 @@ void TileMapDelete(TileMap *map)
 	{
 		for (x = 0; x < map->numColumns; +x)
 		{
-			if (&map->overworld[y][x] != NULL)
+			if (&map->map[y][x] != NULL)
 			{
-				TileDelete(&map->overworld[x][y]);
+				TileDelete(&map->map[x][y]);
 			}
 		}
 	}
 }
 
-void RenderOverworldToTexture(TileMap *map)
+void RenderMapToTexture(TileMap *map)
 {
-	Vector4D col = vector4d(1, 1, 1, 1);
 	Vector2D scale;
 	Vector2D scaleCenter;
 	Vector2D flip;
@@ -397,25 +405,25 @@ void RenderOverworldToTexture(TileMap *map)
 	scaleCenter =  vector2d(map->cellWidth / 2, map->cellHeight / 2);
 	flip = vector2d(0, 0);
 
-	SDL_SetRenderTarget(GetRenderer(), map->overworldRenderTarget);
+	SDL_SetRenderTarget(GetRenderer(), map->self->renderTarget);
 
 	for (y = 0; y < map->numRows; ++y)
 	{
 		for (x = 0; x < map->numColumns; ++x)
 		{			
-			if (!map->overworld[x][y].active)
+			if (!map->map[x][y].active)
 			{
 				continue;
 			}
 
-			DrawSprite(map->overworldSpriteSheet,
+			DrawSprite(map->mapSpriteSheet,
 				vector2d(x * map->cellWidth, y * map->cellHeight ),
 				&scale,
 				&scaleCenter,
 				&rot,
 				&flip,
 				NULL,
-				map->overworld[x][y].offsetInColumn,
+				map->map[x][y].offsetInColumn,
 				0,
 				map->cellWidth,
 				map->cellHeight);
@@ -428,16 +436,40 @@ void RenderOverworldToTexture(TileMap *map)
 }
 
 
-void DrawOverworld(TileMap *map)
+void DrawMap(Entity *mapEntity)
 {
-	Vector4D col = vector4d(1, 1, 1, 1);
-	Vector2D scale;
-	Vector2D scaleCenter;
-	Vector2D flip;
-	Vector3D rot = { 0, 0, 0 };
-
-	SDL_RenderCopy(GetRenderer(), map->overworldRenderTarget, NULL, NULL);
-
+	Vector2D camPos = GetCameraPosition();
+	Vector2D resultPos = { 0 };
+	Vector2D one = { 1, 1 };
+	Sprite s = { 0 };
+	vector2d_sub(resultPos, mapEntity->position, camPos);
 	
+	s.texture = mapEntity->renderTarget;
+
+	DrawSprite(&s, resultPos, &one, NULL, NULL, NULL, NULL, 0, 0, mapEntity->boundingBox.w, mapEntity->boundingBox.h);
+
+
 }
 
+Bool AddEntityToTileMap(Entity *ent, TileMap* map)
+{
+
+}
+
+void TileInitEntities(Uint32 max, TileMap* map)
+{
+	if (!max)
+	{
+		slog("Cannot init 0 tilemap  entities");
+	}
+
+	map->entityList = (Entity*)malloc(sizeof(Entity) * max);
+	memset(map->entityList, 0, sizeof(Entity) * max);
+}
+
+Vector2D GetCurrentTileMapDimensions(Entity *self)
+{
+	Vector2D dim = { self->boundingBox.w, self->boundingBox.h };
+
+	return dim;
+}

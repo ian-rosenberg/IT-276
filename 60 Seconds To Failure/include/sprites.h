@@ -3,7 +3,6 @@
 /*
 Credits: https://opengameart.org/users/buch for overworld sprites
 		 https://opengameart.org/users/eris for interior sprites
-		 https://opengameart.org/users/balmer & Stephen Challener (Redshrike) for boss sprites
 */
 
 
@@ -90,6 +89,15 @@ void DrawSprite(Sprite *sprite,
 	Uint32 yOffset,
 	Uint32 frameWidth,
 	Uint32 frameHeight);
+
+/**
+* @brief Draw a specified rect within a texture, meant for backgrounds/tilemaps
+* @param tex SDL texture to render
+* @param x The x coord to draw
+* @param y The y coord to draw 
+* @param clip Rect contsining the clipped region of the texture
+*/
+void DrawTextureWithCamera(SDL_Texture *tex, int x, int y, SDL_Rect *clip);
 
 /**
 * @brief Draw a single image to screen
