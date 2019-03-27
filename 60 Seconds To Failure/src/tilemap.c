@@ -112,7 +112,7 @@ TileMap* NewTileMap(Uint32 width, Uint32 height)
 			tilemapManager.tilemaps[i].numColumns = width;
 			tilemapManager.tilemaps[i].numRows = height;
 			tilemapManager.tilemaps[i].mapName = NULL;
-			tilemapManager.tilemaps[i].self = NewEntity(NewActorByName("Overworld"));
+			tilemapManager.tilemaps[i].self = NewEntity(NewActorByName("Overworld", OverWorld));
 			tilemapManager.tilemaps[i].self->renderTarget = NULL;
 			
 
