@@ -43,20 +43,22 @@ int main(int agrc, char *arg[])
 	SetCameraBounds(dimensions);
 	SetCameraPosition(GetPlayerEntity()->position);
 
+	PlayerSetOwner(gameWorld->overworld);
 
-	PlayerSetOwner(gameWorld->overworld->self);
+	AddEntityToTileMap(&GetPlayerEntity()->body, gameWorld->overworld);
 
 	SDL_ShowCursor(SDL_DISABLE);
 
-
 	while (!done)
-	{
+	{		
 		SDL_PumpEvents();
 		keys = SDL_GetKeyboardState(NULL);
 
 		EntityThinkAll();
 
 		EntityUpdateAll();
+
+		MapUpdate(gameWorld->overworld);
 
 		ClearScreen();
 
@@ -65,6 +67,8 @@ int main(int agrc, char *arg[])
 		EntityDrawAll();
 
 		GUIDrawHUD();
+
+		gf2d_space_draw(gameWorld->overworld->mapSpace, GetCameraOffset());
 
 		NextFrame();	
 

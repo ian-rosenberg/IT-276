@@ -385,7 +385,7 @@ SDL_Texture* CreateBlankTexture(int width, int height, Uint32 fmt)
 	
 	if (!tex)
 	{
-		printf("Unable to create blank texture! SDL Error: %s\n", SDL_GetError());
+		slog("Unable to create blank texture! SDL Error: %s\n", SDL_GetError());
 	
 		return NULL;
 	}

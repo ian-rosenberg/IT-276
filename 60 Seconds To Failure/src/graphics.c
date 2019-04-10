@@ -34,7 +34,7 @@ typedef struct
 static Graphics graphics;
 
 //forward declarations
-void Graphics_Close();
+void GraphicsClose();
 
 void GraphicsInit(Uint32 winWidth, Uint32 winHeight, Bool fullscreen, Uint32 fDelay, Vector4D bgcolor, Uint8 showFPS)
 {

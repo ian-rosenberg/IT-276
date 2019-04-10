@@ -11,6 +11,11 @@ typedef struct
 
 static Camera cam = { 0 };
 
+Rect GetCameraDimensions()
+{
+	return gf2d_rect(cam.dimensions.x, cam.dimensions.y, cam.dimensions.w, cam.dimensions.h);
+}
+
 void SetCameraDimensions(SDL_Rect dim)
 {
 	cam.dimensions = dim;
@@ -48,4 +53,11 @@ void SetCameraPosition(Vector2D pos)
 Vector2D GetCameraPosition()
 {
 	return cam.position;
+}
+
+Vector2D GetCameraOffset()
+{
+	Vector2D cameraPos = vector2d(cam.position.x *= -1, cam.position.y *= -1);
+
+	return cameraPos;
 }

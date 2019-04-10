@@ -5,6 +5,7 @@
 #define PLAYER_WALKING_ANIMATION "walking"
 
 #include "entity.h"
+#include "entity_common.h"
 
 typedef struct Player_S
 {
@@ -58,7 +59,10 @@ void PlayerFree();
 
 /**
 * @brief Set the owner of an entity
-* @param owner The entity to assign as owner
+* @param owner The tilemap to assign as owner
 */
-void PlayerSetOwner(Entity *owner);
+void PlayerSetOwner(TileMap* owner);
+
+//Test for player collision
+int PlayerTouch(struct Body_S *self, List *collision);
 #endif

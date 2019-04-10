@@ -1,5 +1,4 @@
 #include "player.h"
-#include "tilemap.h"
 #include "simple_logger.h"
 #include "camera.h"
 
@@ -25,21 +24,40 @@ void PlayerInit()
 	player.self->maxHealth = 100.0f;
 	player.self->health = player.self->maxHealth;
 
+	player.self->position = vector2d(640, 360);
+
+	player.self->shape = gf2d_shape_circle(0, 0,25);
+	
+	gf2d_body_set(&player.self->body,
+		player.self->actor->name,
+		1,
+		WORLD_LAYER,
+		ALL_LAYERS,
+		PLAYER_TEAM,
+		player.self->position,
+		player.self->velocity,
+		10,
+		0,
+		0,
+		&player.self->shape,
+		player.self,
+		PlayerTouch);
+
 	player.self->Draw = PlayerDraw;
 	player.self->Think = PlayerThink;
 	player.self->Update = PlayerUpdate;
+	player.self->Free = EntityFree;
+	player.self->touch = PlayerTouch;
 
 	player.self->velocity = vector2d(0, 0);
-
+	player.self->facing = vector2d(1, 0);
 	player.self->flip = vector2d(0, 0);
 	player.self->scale = vector2d(0.75f, 0.75f);
-
-	player.self->position = vector2d(640, 360);
 
 	player.self->actor = playerActor;
 
 	player.controller = SDL_GameControllerOpen(0);
-	player.maxSpeed = 2.5f;
+	player.maxSpeed = 2.0f;
 
 	player.self->actor->animState = State_Idle;
 	player.self->logicalState = State_Idle;
@@ -58,7 +76,6 @@ Entity* GetPlayerEntity()
 
 void PlayerThink(Entity *self)
 {
-	
 	SetCameraPosition(self->position);
 
 	if (player.controller != 0 && SDL_GameControllerGetAttached(player.controller)) {
@@ -96,42 +113,28 @@ void PlayerThink(Entity *self)
 
 		//Stop moving player when left stick is left alone
 		if (LeftStick.x > 0 && self->velocity.x < 0) {
-			self->velocity.x = 0.0f;
+			player.self->velocity.x = 0.0f;
 		}
 		if (LeftStick.x < 0 && self->velocity.x > 0) {
-			self->velocity.x = 0.0f;
+			player.self->velocity.x = 0.0f;
 		}
 		if (LeftStick.y > 0 && self->velocity.y < 0) {
-			self->velocity.y = 0.0f;
+			player.self->velocity.y = 0.0f;
 		}
 		if (LeftStick.y < 0 && self->velocity.y > 0) {
-			self->velocity.y = 0.0f;
+			player.self->velocity.y = 0.0f;
 		}
 
 		//Move player according to left stick
-		self->velocity.x = LeftStick.x*0.0010f;
-		self->velocity.y = LeftStick.y*0.0010f;
-
-		if (self->velocity.x > player.maxSpeed) {
-			self->velocity.x = player.maxSpeed;
-		}
-		else if (self->velocity.x < -player.maxSpeed) {
-			self->velocity.x = -player.maxSpeed;
-		}
-		if (self->velocity.y > player.maxSpeed) {
-			self->velocity.y = player.maxSpeed;
-		}
-		else if (self->velocity.y < -player.maxSpeed) {
-			self->velocity.y = -player.maxSpeed;
-		}
-
+		player.self->velocity.x = LeftStick.x*0.0010f;
+		player.self->velocity.y = LeftStick.y*0.0010f;
 
 		//If left stick is untouched, player stops moving
 		if (LeftStick.x == 0)
-			self->velocity.x = 0.0f;
+			player.self->velocity.x = 0.0f;
 
 		if (LeftStick.y == 0)
-			self->velocity.y = 0.0f;
+			player.self->velocity.y = 0.0f;
 	}
 	else {
 		//Controller is not plugged in.
@@ -139,8 +142,8 @@ void PlayerThink(Entity *self)
 
 
 	//Set logical state
-	if (self->velocity.x != 0.0f ||
-		self->velocity.y != 0.0f)
+	if (player.self->velocity.x != 0.0f ||
+		player.self->velocity.y != 0.0f)
 	{
 		self->logicalState = State_Walking;
 		self->actor->currentAnimation = GetAnimationByName("walk");
@@ -159,6 +162,7 @@ void PlayerDraw(Entity *self)
 {
 	Vector2D centerScalePoint;
 	Vector2D resultPos = { 0 };
+	Color debugColor = gf2d_color8(.5, 1, 0, 1);
 
 	if (!self)
 	{
@@ -198,12 +202,14 @@ void PlayerDraw(Entity *self)
 
 
 	AnimationNextFrame(self->actor->currentAnimation, &self->actor->currentAnimation->currentFrame);
+
+	//gf2d_shape_draw(self->shape, debugColor, resultPos);
 }
 
 void PlayerUpdate(Entity *self)
 {
-	Vector2D tilemapDimensions = GetCurrentTileMapDimensions(player.owner);
-	
+	Vector2D tilemapDimensions = vector2d(player.self->currentMap->boundingBox.w, player.self->currentMap->boundingBox.h);
+
 	if (!self)
 	{
 		return;
@@ -225,23 +231,23 @@ void PlayerUpdate(Entity *self)
 		{
 			player.self->flip.x = 0;
 		}
-
-		self->position.x += self->velocity.x;
-		self->position.y += self->velocity.y;
 	}
 
-	
-	slog("Player pos:(%f,%f) TileMap :(%f,%f)", self->position.x, self->position.y, tilemapDimensions.x, tilemapDimensions.y);
-	//slog("Player's owner %s", player.owner->actor->name);
-	if (self->position.x < 0 || self->position.x + player.dimensions.x > GetCurrentTileMapDimensions(player.owner).x)
-	{
-		self->position.x -= self->velocity.x;
+	if (player.self->velocity.x > player.maxSpeed) {
+		player.self->velocity.x = player.maxSpeed;
+	}
+	else if (player.self->velocity.x < -player.maxSpeed) {
+		player.self->velocity.x = -player.maxSpeed;
+	}
+	if (player.self->velocity.y > player.maxSpeed) {
+		player.self->velocity.y = player.maxSpeed;
+	}
+	else if (player.self->velocity.y < -player.maxSpeed) {
+		player.self->velocity.y = -player.maxSpeed;
 	}
 
-	if (self->position.y < 0 || self->position.y + player.dimensions.y > GetCurrentTileMapDimensions(player.owner).y)
-	{
-		self->position.y -= self->velocity.y;
-	}
+	gf2d_body_push(&player.self->body, player.self->velocity, player.maxSpeed);
+	entity_world_snap(player.self);
 
 	
 	//set anim state
@@ -270,9 +276,13 @@ void PlayerUpdate(Entity *self)
 void PlayerFree()
 {
 	SDL_GameControllerClose(player.controller);
+
+	DeleteActor(player.self->actor);
+
+	MapRemoveEntity(player.owner, &player.self->body);
 }
 
-void PlayerSetOwner(Entity *owner)
+void PlayerSetOwner(TileMap *owner)
 {
 	if (!player.self)
 	{
@@ -284,6 +294,11 @@ void PlayerSetOwner(Entity *owner)
 		return;
 	}
 
-	player.owner = owner;
+	player.self->currentMap = owner;
+}
+
+int PlayerTouch(struct Body_S *self, List *collision)
+{
+	slog("Player touched something");
 }
 

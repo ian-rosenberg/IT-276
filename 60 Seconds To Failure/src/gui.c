@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "gui.h"
 #include "graphics.h"
 #include "gf2d_text.h"

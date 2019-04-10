@@ -5,7 +5,7 @@
 #include "sprites.h"
 #include "gf2d_types.h"
 #include "gf2d_vector.h"
-#include "entity.h"
+#include "gf2d_space.h"
 
 typedef enum {
 	Ground = 0,
@@ -23,13 +23,16 @@ typedef enum {
 	Bottom = 6,
 	Top = 7,
 	Center1 = 8,
-	Cneter2 = 9
+	Center2 = 9
 }TileAlignmentType;
 
 typedef struct Tile_S
 {
 	int					_refCount;
+	int					filled;
 	
+	Shape				*shape;
+
 	TileType			tileType;
 	TileAlignmentType	tileGroup;
 	Sprite				*sprite;
@@ -48,32 +51,33 @@ typedef struct
 	Uint32			numColumns, numRows, cellWidth, cellHeight, numCells;
 
 	Uint8			_inUse;
-
-	Uint32			maxEntities;
-	Entity			*entityList;
-
-	Entity			*self;
 	
 	Vector2D		spawnPos, bossPos;
 	Vector2D		*shelterPositions;
 
 	Vector2D		currentTileFilled;
 
+	Vector2D		position;
+
 	Tile			**map;
 	Sprite			*mapSpriteSheet;
+	Sprite			*emptyTile;
 
-	//Tile			*sideView;
-	//Sprite			*sideViewSprite;
+	Space			*mapSpace;
+	SDL_Rect		boundingBox, srcRect;
 
-	//Sprite			*shelter;
+	TextLine		backgroundImage;    /**<background image for this level*/
+	TextLine		backgroundMusic;    /**<background music for this level*/
+
+	Sprite			*shelter;
 	
-	//Sprite			*bossArea;
+	Sprite			*bossArea;
 
 	char			*mapName;
-	//char			*shelterName;
-	//char			*bossAreaName;
+	char			*shelterName;
+	char			*bossAreaName;
 
-	SDL_Rect		srcRect;
+	SDL_Texture		*renderTarget;
 }TileMap;
 
 /**
@@ -87,12 +91,6 @@ void TileMapInit(Uint32 max);
 * @param max The number of tiles to support
 */
 void TileInit(Uint32 max);
-
-/**
-* @brief Init the tilemap's entities
-* @param map The map to add enemies to
-*/
-void TileInitEntities(Uint32 max, TileMap* map);
 
 /**
 * @brief Find and add an unused/referenced tilemap to use
@@ -122,11 +120,6 @@ void TileMapManagerClose();
 */
 TileMap* LoadTileMapFromFile(char* filename);
 
-/**
-* @brief Memset and free a tilemap
-* @param mapEntity The tilemap to delete
-*/
-void TileMapDelete(Entity *mapEntity);
 
 /**
 * @brief Delete a tile
@@ -135,16 +128,15 @@ void TileMapDelete(Entity *mapEntity);
 void TileDelete(Tile* tile);
 
 /**
+* @brief delete a tilemap
+*/
+void TileMapDelete(TileMap *map);
+
+/**
 * @brief Draw a tilemap
 * @param the map to draw
 */
 void DrawMap(TileMap *map);
-
-/**
-* @brief Retrieve the current tilemap
-* @returns the current map's tilemap
-*/
-TileMap* GetCurrentTileMap();
 
 /**
 * @brief Render the entire overworld to a render target texture
@@ -157,11 +149,23 @@ void RenderMapToTexture(TileMap *map);
 * @param ent The entity to add
 * @returns true on success false on failure
 */
-Bool AddEntityToTileMap(Entity *ent, TileMap* map);
+Bool AddEntityToTileMap(Body *body, TileMap* map);
 
 /**
 * @brief Retrieve the current map's dimensions
 * @param owner The map to get dimensions of
 */
-Vector2D GetCurrentTileMapDimensions(Entity *owner);
+Vector2D GetCurrentTileMapDimensions(TileMap *map);
+
+/**
+* @brief Remove entity from tilemap
+* @param map The map to remove from
+* @param ent The entity's body to remove
+*/
+void MapRemoveEntity(TileMap* map, Body *body);
+
+/**
+* @brief Update the map's space the space's bodies
+*/
+void MapUpdate(TileMap *map);
 #endif
