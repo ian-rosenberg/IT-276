@@ -336,6 +336,12 @@ void FreeActor(Actor *actor)
 	{
 		return;
 	}
+
+	if (!actor->animations)
+	{
+		slog("No animations to delete for empty actor");
+		return;
+	}
 	
 	for (i = 0; i < actor->numAnimations; ++i)
 	{

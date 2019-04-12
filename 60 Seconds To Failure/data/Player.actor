@@ -3,14 +3,14 @@ scale: 1.0f,1.0f
 color: 255,255,255,255
 colorSpecial: 10,255,100,255
 yOffset: 0
-numAnimations: 2
+numAnimations: 3
 
 name: idle
 filename: images/Player/playerIdle.png
 length: 6
 frameWidth: 40
 frameHeight: 81
-frameRate: 0.06
+frameRate: 0.1
 type: loop
 
 name: walk
@@ -18,13 +18,13 @@ filename: images/Player/playerWalk.png
 length: 7
 frameWidth: 50
 frameHeight: 82
-frameRate: 0.085
+frameRate: 0.06
 type: loop
 
-name: attack
+name: attacking
 filename: images/Player/playerPunch.png
 length: 9
 frameWidth: 74
 frameHeight: 81
-frameRate: 0.05
+frameRate: 0.075
 type: once

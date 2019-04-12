@@ -3,8 +3,10 @@
 
 #define PLAYER_IDLE_ANIMATION "idle"
 #define PLAYER_WALKING_ANIMATION "walking"
+#define PLAYER_ATTACKING_ANIMATION "attacking"
 
-#include "entity.h"
+#include "tilemap.h"
+#include "entity_common.h"
 
 typedef struct Player_S
 {
@@ -12,6 +14,7 @@ typedef struct Player_S
 	Entity				*self;
 	Entity				*owner;
 
+	const Uint8			*keys;
 	SDL_GameController	*controller;
 	float				sensitivity;
 	float				maxSpeed;
@@ -56,9 +59,6 @@ void PlayerUpdate(Entity *self);
 */
 void PlayerFree();
 
-/**
-* @brief Set the owner of an entity
-* @param owner The entity to assign as owner
-*/
-void PlayerSetOwner(Entity *owner);
+//Test for player collision
+int PlayerTouch(struct Body_S *self, struct List *collision);
 #endif

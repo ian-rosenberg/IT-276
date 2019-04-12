@@ -32,7 +32,7 @@ int main(int agrc, char *arg[])
 	ActorManagerInit(1024);
 	EntityManagerInit(1024);
 	TileInit(65536);
-	TileMapInit(512);
+	TileMapInit(4);
 	WorldManagerInit(256);
 	gameWorld = WorldInit("config/overworld.cfg", "");
 	PlayerInit();
@@ -43,28 +43,35 @@ int main(int agrc, char *arg[])
 	SetCameraBounds(dimensions);
 	SetCameraPosition(GetPlayerEntity()->position);
 
+	SetCurrentMapActive(gameWorld->overworld);
 
-	PlayerSetOwner(gameWorld->overworld->self);
+	AddEntityToTileMap(GetPlayerEntity(), gameWorld->overworld);
 
 	SDL_ShowCursor(SDL_DISABLE);
 
-
 	while (!done)
-	{
+	{		
 		SDL_PumpEvents();
+
 		keys = SDL_GetKeyboardState(NULL);
 
 		EntityThinkAll();
 
 		EntityUpdateAll();
 
-		ClearScreen();
+		MapUpdate(GetCurrentMap());
 
-		DrawMap(gameWorld->overworld);
+		ClearScreen();
+		
+
+		DrawMap(GetCurrentMap());
+
 
 		EntityDrawAll();
 
 		GUIDrawHUD();
+
+		gf2d_space_draw(gameWorld->overworld->mapSpace, GetCameraOffset());
 
 		NextFrame();	
 
@@ -73,6 +80,7 @@ int main(int agrc, char *arg[])
 			done = true;
 		}	
 	}
+
 
 	slog("---==== END ====---");
 

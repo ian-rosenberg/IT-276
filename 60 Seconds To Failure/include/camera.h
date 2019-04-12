@@ -2,6 +2,7 @@
 #define __CAMERA__
 
 #include <SDL.h>
+#include "gf2d_shape.h"
 #include "gf2d_vector.h"
 
 /**
@@ -30,9 +31,15 @@ void SetCameraBounds(SDL_Rect bounds);
 Vector2D GetCameraPosition();
 
 /**
-* @brief Move the camera
-* @param vel The velocity to apply
+* @brief Get the current camera offset
+* @returns 2D coordinates of the camera
 */
-void CameraMove(Vector2D vel);
+Vector2D GetCameraOffset();
+
+/**
+* @brief Get camera's dimensions
+* @returns Rect containing x,y pos and width + height
+*/
+Rect GetCameraDimensions();
 
 #endif

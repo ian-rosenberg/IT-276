@@ -47,7 +47,7 @@ void EntityManagerClose()
 	{
 		for (i = 0; i < entityManager.maxEntities; ++i)
 		{		
-			FreeEntity(&entityManager.entityList[i]);
+			EntityFree(&entityManager.entityList[i]);
 		}
 
 		free(entityManager.entityList);
@@ -87,9 +87,7 @@ Entity* NewEntity(Actor* act)
 
 			ent->Update = EntityUpdate;
 
-			ent->Free = EntityDelete;
-
-			ent->renderTarget = NULL;
+			ent->Free = EntityFree;
 			
 			++entityManager.numEntities;
 
@@ -98,30 +96,6 @@ Entity* NewEntity(Actor* act)
 		}
 	}
 	return NULL;
-}
-
-void FreeEntity(Entity *self)
-{
-	//int i;
-
-	if (!self)return;
-
-	if (self->Free)
-	{
-		self->Free(self);
-	}
-
-	/*
-	for (i = 0; i < EntitySoundMax; i++)
-	{
-		gf2d_sound_free(self->sound[i]);
-	}*/
-
-	FreeActor(self->actor);
-	
-	//gf2d_particle_emitter_free(self->pe);
-	
-	memset(self, 0, sizeof(Entity));
 }
 
 void EntityDraw(Entity *self)
@@ -174,7 +148,7 @@ void EntityUpdate(Entity *self)
 
 	if (self->dead != 0)
 	{
-		FreeEntity(self);
+		EntityFree(self);
 	}
 
 	//update position logic
@@ -229,26 +203,117 @@ void EntityThink(Entity *self)
 	}
 }
 
-void EntityDelete(Entity *self)
-{
-	if (!self)
-	{
-		return;
-	}
-
-	if (!self->actor)
-		return;
-
-	DeleteActor(self->actor);
-
-	memset(self, 0, sizeof(Entity));
-}
-
 void EntityDeleteAll()
 {
 	int i;
 	for (i = 0; i < entityManager.maxEntities; i++)
 	{
-		EntityDelete(&entityManager.entityList[i]);
+		EntityFree(&entityManager.entityList[i]);
 	}
+}
+
+void gf2d_entity_pre_sync_all()
+{
+	int i;
+	for (i = 0; i < entityManager.maxEntities; i++)
+	{
+		if (entityManager.entityList[i]._inUse == 0)continue;
+		gf2d_entity_pre_sync_body(&entityManager.entityList[i]);
+	}
+}
+
+void gf2d_entity_post_sync_all()
+{
+	int i;
+	for (i = 0; i < entityManager.maxEntities; i++)
+	{
+		if (entityManager.entityList[i]._inUse == 0)continue;
+		gf2d_entity_post_sync_body(&entityManager.entityList[i]);
+	}
+}
+
+void gf2d_entity_pre_sync_body(Entity *self)
+{
+	if (!self)return;// nothin to do
+	vector2d_copy(self->body.velocity, self->velocity);
+	vector2d_copy(self->body.position, self->position);
+}
+
+void gf2d_entity_post_sync_body(Entity *self)
+{
+	if (!self)return;// nothin to do
+//    slog("entity %li : %s old position(%f,%f) => new position (%f,%f)",self->id,self->name,self->position,self->body.position);
+	vector2d_copy(self->position, self->body.position);
+	vector2d_copy(self->velocity, self->body.velocity);
+}
+
+Entity *gf2d_entity_get_by_id(Uint32 id)
+{
+	int i;
+	for (i = 0; i < entityManager.maxEntities; i++)
+	{
+		if (entityManager.entityList[i]._inUse == 0)continue;
+		if (entityManager.entityList[i].id == id)
+		{
+			return &entityManager.entityList[i];
+		}
+	}
+	return NULL;
+}
+
+int body_body_touch(Body *self, List *collisionList)
+{
+	Entity *selfEnt;
+	Collision *c;
+	int i, count;
+	if (!self)return 0;
+	selfEnt = (Entity*)self->data;
+	if (!selfEnt->touch)return 0;
+	count = gf2d_list_get_count(collisionList);
+	for (i = 0; i < count; i++)
+	{
+		c = (Collision *)gf2d_list_get_nth(collisionList, i);
+		if (!c)continue;
+		if (!c->body)continue;
+		if (!c->body->data)continue;
+		selfEnt->touch(selfEnt, (Entity*)c->body->data);
+	}
+	return 0;
+}
+
+void EntityFree(Entity *self)
+{
+	int i;
+	
+	if (!self)return;
+
+	memset(self, 0, sizeof(Entity));
+	
+	//free(self);
+}
+
+Entity *gf2d_entity_iterate(Entity *start)
+{
+	Entity *p = NULL;
+	if (!start)p = entityManager.entityList;
+	else
+	{
+		p = start;
+		p++;
+	}
+	for (; p != &entityManager.entityList[entityManager.maxEntities]; p++)
+	{
+		if (p->_inUse)return p;
+	}
+	return NULL;
+}
+
+int gf2d_entity_validate_entity_pointer(void *p)
+{
+	Entity *ent;
+	if (!p)return 0;
+	ent = (Entity *)p;
+	if (ent < entityManager.entityList)return 0;
+	if (ent >= &entityManager.entityList[entityManager.maxEntities])return 0;
+	return 1;
 }

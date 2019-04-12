@@ -2,7 +2,8 @@
 #define __SPRITES__
 /*
 Credits: https://opengameart.org/users/buch for overworld sprites
-		 https://opengameart.org/users/eris for interior sprites
+		 https://opengameart.org/users/bart for interior sprites
+		 https://opengameart.org/users/redshrike for robot sprite
 */
 
 
