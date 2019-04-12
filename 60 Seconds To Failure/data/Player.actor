@@ -10,7 +10,7 @@ filename: images/Player/playerIdle.png
 length: 6
 frameWidth: 40
 frameHeight: 81
-frameRate: 0.1
+frameRate: 0.2
 type: loop
 
 name: walk
@@ -18,7 +18,7 @@ filename: images/Player/playerWalk.png
 length: 7
 frameWidth: 50
 frameHeight: 82
-frameRate: 0.06
+frameRate: 0.1714
 type: loop
 
 name: attacking
@@ -26,5 +26,5 @@ filename: images/Player/playerPunch.png
 length: 9
 frameWidth: 74
 frameHeight: 81
-frameRate: 0.075
+frameRate: 0.12
 type: once
