@@ -5,10 +5,41 @@
 
 #include "animations.h"
 
-typedef struct{
+typedef struct AnimationData_S
+{
+	char			name[GF2DTEXTLEN];
+	char			filepath[GF2DTEXTLEN];
+
+	Uint32			length;
+	Uint32			cellWidth, cellHeight, yOffset;
+
+	Vector4D		colorSpecial;
+
+	float			frameRate;
+
+	AnimationType	animType;
+
+	char			tempData[GF2DTEXTLEN];
+}AnimationData;
+
+typedef struct ActorData_S
+{
+	char			name[GF2DTEXTLEN];
+
+	Vector4D		actorColor;
+
+	Uint32			numAnim;
+
+	char			tempData[GF2DTEXTLEN];
+}ActorData;
+
+typedef struct Actor_S
+{
 	Uint8			_inUse;
 
-	TextLine		name;
+	char			*name;
+
+	Vector2D		scale;
 
 	Sprite			*currentSprite;
 
@@ -22,14 +53,6 @@ typedef struct{
 
 	State			animState;
 }Actor;
-
-
-/**
-* @brief Intialize the actor list on a per actor basis
-* @param max The max number of actors to load
-* @param max The max number of actors to be simultaneously loaded
-*/
-void ActorManagerInit(Uint32 max);
 
 /**
 * @brief Get a new actor list
@@ -52,13 +75,6 @@ Actor* NewActorByName(char *name);
 void DeleteActor(Actor *actor);
 
 /**
-* @brief Get an animatiob by its filename
-* @param filename The file to check against
-* @returns The actor in question
-*/
-Actor* GetActorByName(char *name);
-
-/**
 * @brief Load an actor from file
 * @param actor The actor to load into
 * @param file The file to load
@@ -67,33 +83,10 @@ Actor* GetActorByName(char *name);
 Actor* LoadActor(char *file);
 
 /**
-* @brief Set a specific actor given a name within context
-* @param actor The actor to modify
-* @param name The animation's name to use
-*/
-void SetActorAnimation(Actor *actor, char *name);
-
-/**
-* @brief Based on the actor's current action set the next frame and return type
-* @param actor The actor to process
-*/
-void ActorNextFrame(Actor *actor);
-
-/**
 * @brief Free an individual actor
 * @param actor The actor to free
 */
 void FreeActor(Actor *actor);
-
-/**
-* @brief Delete all actors
-*/
-void ClearAllActors(void);
-
-/**
-* @brief Close the actor manager
-*/
-void ActorManagerClose(void);
 
 /**
 * @brief Retrieve the average width and height
@@ -101,4 +94,11 @@ void ActorManagerClose(void);
 * @param actor The actor whose attributes we get
 */
 Vector2D GetAverageActorDimensions(Actor *actor);
+
+/**
+* @brief Pars animation data from file
+* @param filename File to extract data from
+* @returns A list of animations
+*/
+Animation* ParseAnimation(char* filename);
 #endif

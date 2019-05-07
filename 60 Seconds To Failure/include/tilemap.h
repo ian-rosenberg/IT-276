@@ -47,10 +47,19 @@ typedef struct Tile_S
 	Bool				active;
 }Tile;
 
-typedef struct
-{
-	Uint32			numColumns, numRows, cellWidth, cellHeight, numCells;
+typedef struct TileMapData_S {
+	Uint32 col, row, cellWidth, cellHeight, numCells;
+	char mapName[GF2DTEXTLEN];
+	char emptyTileName[GF2DTEXTLEN];
+	Bool flag;
+	SDL_Color *colors;
+	Tile* tileTypes;
+	char colorMap[GF2DTEXTLEN];
+	char tileGenInfoName[GF2DTEXTLEN];
+}TileMapData;
 
+typedef struct TileMap_S
+{
 	Uint8			_inUse;
 	Uint8			active;
 	
@@ -62,39 +71,33 @@ typedef struct
 	Vector2D		position;
 
 	Tile			**map;
+	
+	Uint32			numColumns;
+	Uint32			numRows;
+	Uint32			numCells;
+	Uint32			cellWidth;
+	Uint32			cellHeight;
+
+	char			*mapName;
+	char			*emptyTileName;
 	Sprite			*mapSpriteSheet;
 	Sprite			*emptyTile;
 
 	Uint32			numEnts;
-	Entity*			ents;
+	Entity			*ents;
 	Space			*mapSpace;
 	SDL_Rect		boundingBox, srcRect;
 
-	TextLine		backgroundImage;    /**<background image for this level*/
-	TextLine		backgroundMusic;    /**<background music for this level*/
-
-	Sprite			*shelter;
-	
-	Sprite			*bossArea;
-
-	char			*mapName;
-	char			*shelterName;
-	char			*bossAreaName;
+	char			*backgroundImage;    /**<background image for this level*/
+	char			*backgroundMusic;    /**<background music for this level*/
 
 	SDL_Texture		*renderTarget;
 }TileMap;
 
 /**
-* @brief Intialize the tilemap system
-* @param max The number of tilemaps to support
+* @brief Intialize the tile map manager given a number of tilemaps
 */
-void TileMapInit(Uint32 max);
-
-/**
-* @brief Init the tile system
-* @param max The number of tiles to support
-*/
-void TileInit(Uint32 max);
+void TileMapManagerInit(Uint32 max);
 
 /**
 * @brief Find and add an unused/referenced tilemap to use
@@ -105,24 +108,11 @@ void TileInit(Uint32 max);
 TileMap* NewTileMap(Uint32 width, Uint32 height);
 
 /**
-* @brief Return a new/unreferenced tile from the manager
-* @param offsetInColumn The offset in the column of sprites
-* @param sprite Sprite to assign
-* @returns the new tile
-*/
-Tile* NewTile(Uint32 offsetInColumn, Sprite *sprite);
-
-/**
-* @brief Close the tilemanager system and clean up all tiles
-*/
-void TileMapManagerClose();
-
-/**
 * @brief Generate a tilemap from config file
 * @param filename The file to load
 * @returns a tilemap loaded from the specified file
 */
-TileMap* LoadTileMapFromFile(char* filename);
+TileMap* LoadTileMapFromFile(char* filename, Bool gravity);
 
 /**
 * @brief delete a tilemap
@@ -146,13 +136,18 @@ void RenderMapToTexture(TileMap *map);
 * @param ent The entity to add
 * @returns true on success false on failure
 */
-Bool AddEntityToTileMap(Entity* ent, TileMap* map);
+Bool AddEntityToTileMap(Entity* ent);
 
 /**
 * @brief Retrieve the current map's dimensions
 * @param owner The map to get dimensions of
 */
 Vector2D GetCurrentTileMapDimensions(TileMap *map);
+
+/**
+* @brief Retrieve the current active tile map
+*/
+TileMap* GetCurrentTileMap();
 
 /**
 * @brief Remove entity from tilemap
@@ -167,15 +162,26 @@ void MapRemoveEntity(TileMap* map, Body *body);
 void MapUpdate(TileMap *map);
 
 /**
-* @brief Gets the current tilemap that is active
+* @brief Parses the config file of the map
+* @param name Of config file to parse
+* @param map To create
+* @param data Tilemap data to populate
+* @returns A pointer to the parsed tilemap
 */
-TileMap* GetCurrentMap();
+TileMap* ParseMapFile(char* filename, TileMapData *data);
 
 /**
-* @brief Sets the current tilemap to active, and the
-* rest become inactive, but still exist in memory for later usage
+* @brief Parse the file with the mapping colors
+* @param data The map's data to populate
 */
-void SetCurrentMapActive(TileMap* map);
+void ParseTileColors(TileMapData *data, Uint32 numCells, Bool gravity);
 
-
+/**
+* @brief Function to mark tiles as active or not, and to 
+* check if a tile is an edge or a corner for collisions
+* @param data The generation data for this tilemap
+* @param map Map to generate
+* @param gravity If this is true, then the map is a sideView
+*/
+void FillMapTiles(TileMapData *data, TileMap * map, Bool gravity);
 #endif

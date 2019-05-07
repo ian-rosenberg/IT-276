@@ -4,48 +4,6 @@
 #include "simple_logger.h"
 #include "graphics.h"
 
-typedef struct
-{
-	Uint32 maxAnimations;
-
-	Animation *animations;
-}AnimationManager;
-
-//local global
-static AnimationManager animationManager = { 0 };
-
-void ClearAllAnimations();
-
-void AnimationManagerClose()
-{
-	ClearAllAnimations();
-
-	if (animationManager.animations != NULL)
-	{
-		free(animationManager.animations);
-	}
-	animationManager.animations = NULL;
-	animationManager.maxAnimations = 0;
-
-	slog("animation list system closed");
-}
-
-void AnimationManagerInit(Uint32 max)
-{
-	if (!max)
-	{
-		slog("cannot init animation manager for zero animations");
-		return;
-	}
-
-	animationManager.maxAnimations = max;
-
-	animationManager.animations = (Animation*)malloc(sizeof(Animation)*max);
-
-	memset(animationManager.animations, 0, sizeof(Animation)* max);
-
-	atexit(AnimationManagerClose);
-}
 
 void DeleteAnimation(Animation *animList)
 {
@@ -62,66 +20,34 @@ void DeleteAnimation(Animation *animList)
 	memset(animList, 0, sizeof(Animation));//clean up all other data
 }
 
-void FreeAnimation(Animation *animList)
+Animation* NewAnimation(Uint32 numAnim)
 {
-	if (!animList)
+	Animation *anim = NULL;
+
+	if (!numAnim)
 	{
-		return;
+		slog("Cannot create 0 animations");
+		return NULL;
 	}
 
-	animList->refCount--;
-}
+	anim = (Animation*)malloc(sizeof(Animation) * numAnim);
+	memset(anim, 0, sizeof(Animation) * numAnim);
+	
+	anim->animType = 0;
+	anim->cellHeight = 0;
+	anim->cellWidth = 0;
+	anim->colorSpecial = vector4d(0, 0, 0, 0);
+	anim->currentFrame = 0.0f;
+	anim->filepath = NULL;
+	anim->filepath = malloc(sizeof(char) * GF2DTEXTLEN); 
+	memset(anim->filepath, 0, sizeof(char) * GF2DTEXTLEN);
+	anim->frameRate = 0.0f;
+	anim->length = 0;
+	anim->name = NULL;
+	anim->name = malloc(sizeof(char) * GF2DTEXTLEN);
+	memset(anim->name, 0, sizeof(char) * GF2DTEXTLEN);
 
-void ClearAllAnimations()
-{
-	int i;
-
-	for (i = 0; i < animationManager.maxAnimations; ++i)
-	{
-		DeleteAnimation(&animationManager.animations[i]);
-	}
-}
-
-Animation* NewAnimation()
-{
-	int i;
-
-	for (i = 0; i < animationManager.maxAnimations; i++)
-	{
-		if ((animationManager.animations[i].refCount == 0) && (animationManager.animations[i].sprite == NULL))
-		{
-			animationManager.animations[i].refCount = 1;
-			return &animationManager.animations[i];
-		}
-	}
-
-	/*find an unused sprite address and clean up the old data*/
-	for (i = 0; i < animationManager.maxAnimations; i++)
-	{
-		if (animationManager.animations[i].refCount == 0)
-		{
-			DeleteAnimation(&animationManager.animations[i]);
-			animationManager.animations[i].refCount = 1;
-			return &animationManager.animations[i];
-		}
-	}
-	slog("error: out of animation manager's addresses");
-	return NULL;
-}
-
-Animation* GetAnimationByFilename(char* filename)
-{
-	int i;
-
-	for (i = 0; i < animationManager.maxAnimations; ++i)
-	{
-		if (gf2d_line_cmp(animationManager.animations[i].filepath, filename) == 0)
-		{
-			return &animationManager.animations[i];
-		}
-	}
-
-	return NULL;
+	return anim;
 }
 
 int GetAnimationCount(FILE *file)
@@ -141,12 +67,17 @@ int GetAnimationCount(FILE *file)
 	return count;
 }
 
-Animation* GetAnimationByName(char *name)
+Animation* GetAnimationByName(Animation *list, Uint32 numAnim, char *name)
 {
 	int i;
-	if (!animationManager.animations)
+	if (!list)
 	{
-		slog("no action list provided");
+		slog("no aniamtion list provided");
+		return NULL;
+	}
+	if (numAnim < 1)
+	{
+		slog("no number of animations provided");
 		return NULL;
 	}
 	if (!name)
@@ -154,11 +85,11 @@ Animation* GetAnimationByName(char *name)
 		slog("no filename provided");
 		return NULL;
 	}
-	for (i = 0; i < animationManager.maxAnimations; i++)
+	for (i = 0; i < numAnim; i++)
 	{
-		if (gf2d_line_cmp(animationManager.animations[i].name, name) == 0)
+		if (strcmp(list[i].name, name) == 0)
 		{
-			return &animationManager.animations[i];
+			return &list[i];
 		}
 	}
 	return NULL;// not found

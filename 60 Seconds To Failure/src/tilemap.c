@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "tilemap.h"
 #include "graphics.h"
 #include "simple_logger.h"
@@ -15,70 +16,46 @@
 #define GROUND_CENTER_2 9
 #define INSIDE_CENTER_WALKABLE 18
 
+#define WALKABLE_BLOCK1 17
+#define WALKABLE_BLOCK2 18
+#define WALKABLE_BLOCK3 19
+
 char* overworldTileNames[TILE_TYPES] = { "GROUND", "INSIDE", "BUILDING" };
 
-typedef enum{
+typedef enum
+{
 	GROUND = 0,
 	INSIDE = 1,
-	BUILDING = 2
+	STRUCTURE = 2
 }OverworldTileNames;
-
-typedef struct{
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+typedef struct {
 	TileMap		*tilemaps;
 
 	Uint32		maxMaps;
 }TileMapManager;
 
-typedef struct
-{
-	Tile *tiles;
-
-	Uint32 maxTiles;
-}TileManager;
-
 //local global
 static TileMapManager tilemapManager = { 0 };
-static TileManager tileManager = { 0 };
 
-
-void TileMapInit(Uint32 max)
+void TileMapManagerInit(Uint32 max)
 {
+	int i;
+
 	if (!max)
 	{
-		slog("Cannot initialize tilemap manager with 0 tile types");
-		return;
+		slog("Cannot init a tilemap manager with 0 tilemaps");
 	}
-
-	tilemapManager.tilemaps = (TileMap*)malloc(sizeof(TileMap)* max);
-	memset(tilemapManager.tilemaps, 0, sizeof(TileMap)* max);
 
 	tilemapManager.maxMaps = max;
-
-	atexit(TileMapManagerClose);
-}
-
-void TileInit(Uint32 max)
-{
-	if (!max)
-	{
-		slog("Cannot initialize tilemap manager with 0 tile types");
-		return;
-	}
-
-	tileManager.tiles = (Tile*)malloc(sizeof(Tile)* max);
-	memset(tileManager.tiles, 0, sizeof(Tile)* max);
-
-	tileManager.maxTiles = max;
+	tilemapManager.tilemaps = malloc(sizeof(TileMap) * max);
+	memset(tilemapManager.tilemaps, 0, sizeof(TileMap) * max);
 }
 
 TileMap* NewTileMap(Uint32 width, Uint32 height)
 {
 	int i, j, x, y;
-
-	if (!tilemapManager.maxMaps)
-	{
-		return NULL;
-	}
+	TileMap *map = NULL;
 
 	if (!width || !height)
 	{
@@ -89,223 +66,118 @@ TileMap* NewTileMap(Uint32 width, Uint32 height)
 
 	for (i = 0; i < tilemapManager.maxMaps; ++i)
 	{
-		if (tilemapManager.tilemaps[i]._inUse != 1)
+		if (!tilemapManager.tilemaps[i]._inUse && !tilemapManager.tilemaps[i].active)
 		{
-			tilemapManager.tilemaps[i]._inUse = 1;
-			tilemapManager.tilemaps[i].currentTileFilled = vector2d(-1, -1);
-			tilemapManager.tilemaps[i].map = malloc(sizeof(Tile*)* height);
-
-			for (j = 0; j < height; ++j)
-			{
-				tilemapManager.tilemaps[i].map[j] = malloc(width * sizeof (Tile));
-			}
-
-
-			for (y = 0; y < height; ++y)
-			{
-				for (x = 0; x < width; ++x)
-
-				{
-					tilemapManager.tilemaps[i].map[x][y].color = (SDL_Color){ 0, 0, 0, 0 };
-					tilemapManager.tilemaps[i].map[x][y].mappingColor = (SDL_Color){ 0, 0, 0, 0 };
-					tilemapManager.tilemaps[i].map[x][y].offsetInColumn = -1;
-					tilemapManager.tilemaps[i].map[x][y].sprite = NULL;
-					tilemapManager.tilemaps[i].map[x][y].tileGroup = -1;
-					tilemapManager.tilemaps[i].map[x][y].tileType = -1;
-					tilemapManager.tilemaps[i].map[x][y]._refCount = 1;
-					tilemapManager.tilemaps[i].map[x][y].active = 0;
-				}
-			}
-
-			tilemapManager.tilemaps[i].numColumns = width;
-			tilemapManager.tilemaps[i].numRows = height;
-			tilemapManager.tilemaps[i].mapName = NULL;
-			tilemapManager.tilemaps[i].renderTarget = NULL;		
-			tilemapManager.tilemaps[i].numEnts = 0;
-			tilemapManager.tilemaps[i].ents = NULL;
-
-			return &tilemapManager.tilemaps[i];
+			map = &tilemapManager.tilemaps[i];
 		}
 	}
-	
-	return NULL;	
-}
 
-TileMap* LoadTileMapFromFile(char* filename)
-{
-	FILE * file;
-	char buf[1024];
-	char colorMap[1024];
-	TileMap *map = NULL;
-	Uint32 x, y, ite, col, row;
-	Bool flag = false;
-	int i, j;
-	SDL_Color *colors;
-	Tile* tileTypes = NULL;
-
-
-	file = fopen(filename, "r");
-
-	if (!file)
+	if (!map)
 	{
+		slog("Out of tilemap addresses");
+
 		return NULL;
 	}
 
-	//while (!flag)
-	//{
-	while (fscanf(file, "%s", buf) != EOF)
+	map->map = NULL;
+
+	map->_inUse = 1;
+	map->currentTileFilled = vector2d(-1, -1);
+	map->numColumns = width;
+	map->numRows = height;
+
+	map->map = malloc(sizeof(Tile*) * height);
+	memset(map->map, 0, sizeof(Tile*) * height);
+
+	for (j = 0; j < height; ++j)
 	{
-		if (strcmp(buf, "width:") == 0)
-		{
-			fscanf(file, "%i", &col);
-			continue;
-		}
-		if (strcmp(buf, "height:") == 0)
-		{
-			fscanf(file, "%i", &row);
-
-			map = NewTileMap(col, row);
-			continue;
-		}
-		if (strcmp(buf, "numImages:") == 0)
-		{
-			fscanf(file, "%i", &map->numCells);
-
-			tileTypes = (Tile*)malloc(sizeof(Tile)* map->numCells);
-			continue;
-		}
-		if (strcmp(buf, "cellWidth:") == 0)
-		{
-			fscanf(file, "%i", &map->cellWidth);
-			continue;
-		}
-		if (strcmp(buf, "cellHeight:") == 0)
-		{
-			fscanf(file, "%i", &map->cellHeight);
-			continue;
-		}
-		if (strcmp(buf, "groundTiles:") == 0)
-		{
-			fscanf(file, "%64s", &map->mapName);
-
-			map->mapSpriteSheet = LoadImageToTexture(&map->mapName, GetRenderer());
-
-			map->renderTarget = CreateBlankTexture(map->cellWidth * map->numColumns,
-				map->cellHeight * map->numRows,
-				map->mapSpriteSheet->pixelFmt);
-
-			map->mapSpace = gf2d_space_new_full(
-				1,
-				gf2d_rect(0, 0, map->cellWidth * map->numColumns, map->cellHeight * map->numRows),
-				1,
-				vector2d(0, 0),
-				0.1,
-				0.001);
-
-			continue;
-		}
-		if (strcmp(buf, "shelter:") == 0)
-		{
-			//fscanf(file, "%64s", &map->shelterName);
-
-			//map->shelter = LoadImageToTexture(&map->shelterName, GetRenderer());
-			continue;
-		}
-		if (strcmp(buf, "boss:") == 0)
-		{
-			//fscanf(file, "%64s", &map->bossAreaName);
-
-			//map->bossArea = LoadImageToTexture(&map->bossAreaName, GetRenderer());
-			continue;
-		}
-		if (strcmp(buf, "tilemap:") == 0)
-		{
-			fscanf(file, "%64s", &colorMap);
-			colors = GetPixelDataFromFile(&colorMap);
-
-			//flag = true;
-			break;
-		}
-
-		fgets(buf, sizeof(buf), file);
+		map->map[j] = malloc(width * sizeof(Tile));
+		memset(map->map[j], 0, width * sizeof(Tile));
 	}
 
-	j = 0;
-
-	while (!flag)
+	for (y = 0; y < height; ++y)
 	{
-		if (fscanf(file, "%s", buf) == EOF)
+		for (x = 0; x < width; ++x)
 		{
-			rewind(file);
-		}
-
-		//3 tile types
-		for (i = 0; i < TILE_TYPES; ++i)
-		{
-			if (strncmp(buf, overworldTileNames[i], strlen(overworldTileNames[i])) != 0)
-			{
-				continue;
-			}
-			if (j >= map->numCells)
-			{
-				flag = true;
-				break;
-			}
-
-			fscanf(file, "%d,%d,%d",
-				&tileTypes[j].mappingColor.r,
-				&tileTypes[j].mappingColor.g,
-				&tileTypes[j].mappingColor.b);
-
-			for (y = 0; y < map->numRows; ++y)
-			{
-				for (x = 0; x < map->numColumns; ++x)
-				{
-					for (ite = 0; ite < map->numCells; ++ite)
-					{
-						if ((colors + (y*map->numColumns) + x)->r == 0
-							&& (colors + (y*map->numColumns) + x)->g == 0
-							&& (colors + (y*map->numColumns) + x)->b == 0
-							&& map->map[x][y].filled != 1)
-						{
-							map->map[x][y].active = false;
-
-							map->map[x][y].filled = 1;
-
-							map->currentTileFilled.x++;
-							map->currentTileFilled.y++;
-
-							continue;
-						}
-
-						if (colors[(y*map->numColumns) + x].r == tileTypes[ite].mappingColor.r
-							&& colors[(y*map->numColumns) + x].g == tileTypes[ite].mappingColor.g
-							&& colors[(y*map->numColumns) + x].b == tileTypes[ite].mappingColor.b
-							&& map->map[x][y].filled != 1)
-						{
-							map->map[x][y] = *NewTile(ite, map->mapSpriteSheet);
-							map->map[x][y].active = true;
-
-							if (map->map[x][y].offsetInColumn != GROUND_CENTER_1 && map->map[x][y].offsetInColumn != GROUND_CENTER_2 && map->map[x][y].offsetInColumn != INSIDE_CENTER_WALKABLE && map->map[x][y].filled != 1)
-							{
-								gf2d_space_add_static_shape(map->mapSpace, gf2d_shape_rect((x * map->cellWidth) - (map->cellWidth / 2), (y * map->cellHeight) - (map->cellHeight / 2), map->cellWidth, map->cellHeight));
-								
-								map->currentTileFilled.x++;
-								map->currentTileFilled.y++;
-
-								map->map[x][y].filled = 1;
-
-								continue;
-							}//gf2d_shape_rect((x * map->cellWidth) - (map->cellWidth / 2), (y * map->cellHeight) - (map->cellHeight / 2), map->cellWidth, map->cellHeight));
-							//gf2d_shape_circle(x * map->cellWidth, y * map->cellHeight, map->cellWidth/2);
-						}
-					}
-				}
-			}
-
-			++j;
+			map->map[y][x].offsetInColumn = -1;
+			map->map[y][x].sprite = NULL;
+			map->map[y][x].tileGroup = -1;
+			map->map[y][x].tileType = -1;
+			map->map[y][x]._refCount = 1;
+			map->map[y][x].active = 0;
 		}
 	}
+
+	map->numColumns = width;
+	map->numRows = height;
+	map->renderTarget = NULL;
+	map->numEnts = 0;
+	map->ents = NULL;
+	map->mapName = NULL;
+
+	map->active = 1;
+
+	return map;
+}
+
+TileMap* LoadTileMapFromFile(char* filename, Bool gravity)
+{
+	FILE * file;
+	TileMap *map = NULL;
+	char buf[1024];
+	char temp[1024];
+	Uint32 x, y, ite;
+	int i, j;
+	TileMapData *data = NULL;
+	
+	data = malloc(sizeof(TileMapData));
+	memset(data, 0, sizeof(TileMapData));
+
+	data->flag = false;
+
+	map = ParseMapFile(filename, data);
+
+	data->colors = GetPixelDataFromFile(data->colorMap);
+
+	data->tileTypes = (Tile*)malloc(sizeof(Tile)* map->numCells);
+	memset(data->tileTypes, 0, sizeof(Tile) * map->numCells);
+
+	map->emptyTile = LoadImageToTexture(map->emptyTileName, GetRenderer());
+
+	map->mapSpriteSheet = LoadImageToTexture(map->mapName, GetRenderer());
+
+	map->renderTarget = CreateBlankTexture(map->cellWidth * map->numColumns,
+		map->cellHeight * map->numRows,
+		map->mapSpriteSheet->pixelFmt);
+
+	if (!gravity)
+	{
+		map->mapSpace = gf2d_space_new_full(
+			1,
+			gf2d_rect(0, 0, map->cellWidth* map->numColumns, map->cellHeight * map->numRows),
+			1,
+			vector2d(0, 0),
+			0.1,
+			0.001);
+	}
+	else
+	{
+		map->mapSpace = gf2d_space_new_full(
+			3,
+			gf2d_rect(0, 0, map->cellWidth* map->numColumns, map->cellHeight * map->numRows),
+			1,
+			vector2d(0, 10),
+			0.1,
+			0.001);
+	}
+
+	data->flag = false;
+
+	ParseTileColors(data, map->numCells, gravity);
+
+	data->flag = false;
+
+	FillMapTiles(data, map, gravity);
 
 	map->boundingBox.h = map->numRows * map->cellHeight;
 	map->boundingBox.w = map->numColumns * map->cellWidth;
@@ -319,65 +191,11 @@ TileMap* LoadTileMapFromFile(char* filename)
 
 	RenderMapToTexture(map);
 
-	fclose(file);
+	free(data);
 
 	return map;
 }
 
-Tile* NewTile(Uint32 offsetInColumn, Sprite *sprite)
-{
-	int i;
-	
-	if (!tileManager.maxTiles)
-	{
-		return NULL;
-	}
-
-	for (i = 0; i < tileManager.maxTiles; ++i)
-	{
-		if (tileManager.tiles[i]._refCount == 0 && &tileManager.tiles[i] == NULL)
-		{
-			tileManager.tiles[i].sprite = sprite;
-			tileManager.tiles[i].offsetInColumn = offsetInColumn;
-			tileManager.tiles[i].tileGroup = offsetInColumn;
-			tileManager.tiles[i]._refCount = 1;
-			tileManager.tiles[i].filled = -1;
-
-			return &tileManager.tiles[i];
-		}
-	}
-
-	for (i = 0; i < tileManager.maxTiles; ++i)
-	{
-		if (tileManager.tiles[i]._refCount == 0 || !tileManager.tiles[i].active)
-		{
-			memset(&tileManager.tiles[i], 0, sizeof(Tile));
-
-			tileManager.tiles[i].sprite = sprite;
-			tileManager.tiles[i].offsetInColumn = offsetInColumn;
-			tileManager.tiles[i].tileGroup = offsetInColumn;
-			tileManager.tiles[i]._refCount = 1;
-			tileManager.tiles[i].filled = -1;
-
-
-			return &tileManager.tiles[i];
-		}
-	}
-
-	slog("Out of tile address space");
-
-	return NULL;
-}
-
-void TileMapManagerClose()
-{
-	int i;
-
-	for (i = 0; i < tilemapManager.maxMaps; ++i)
-	{
-		TileMapDelete(&tilemapManager.tilemaps[i]);
-	}
-}
 void TileMapDelete(TileMap *map)
 {
 	int i;
@@ -398,6 +216,7 @@ void RenderMapToTexture(TileMap *map)
 	Vector2D scaleCenter;
 	Vector2D flip;
 	Vector3D rot = { 0, 0, 0 };
+	Vector4D zeroAlpha = { 0,0,0,0 };
 	int x, y;
 	
 	scale = vector2d(1, 1);
@@ -409,22 +228,24 @@ void RenderMapToTexture(TileMap *map)
 	for (y = 0; y < map->numRows; ++y)
 	{
 		for (x = 0; x < map->numColumns; ++x)
-		{			
-			if (!map->map[x][y].active)
+		{	
+			if (!map->map[y][x].active)
 			{
-				DrawSprite(map->emptyTile,
+				DrawSprite(map->mapSpriteSheet,
 					vector2d(x * map->cellWidth, y * map->cellHeight),
 					&scale,
 					&scaleCenter,
 					&rot,
 					&flip,
-					NULL,
-					0,
+					&zeroAlpha,
+					map->map[y][x].offsetInColumn,
 					0,
 					map->cellWidth,
 					map->cellHeight);
-					
-					continue;
+
+				SpriteDelete(&map->map[y][x].sprite);
+				
+				continue;
 			}
 
 			DrawSprite(map->mapSpriteSheet,
@@ -434,12 +255,12 @@ void RenderMapToTexture(TileMap *map)
 				&rot,
 				&flip,
 				NULL,
-				map->map[x][y].offsetInColumn,
+				map->map[y][x].offsetInColumn,
 				0,
 				map->cellWidth,
 				map->cellHeight);
 
-			SpriteDelete(&map->map[x][y].sprite);
+			SpriteDelete(&map->map[y][x].sprite);
 		}
 	}
 
@@ -460,10 +281,26 @@ void DrawMap(TileMap *map)
 	s.texture = map->renderTarget;
 
 	DrawSprite(&s, resultPos, &one, NULL, NULL, NULL, NULL, 0, 0, map->boundingBox.w, map->boundingBox.h);
+
 }
 
-Bool AddEntityToTileMap(Entity *ent, TileMap *map)
+TileMap* GetCurrentTileMap()
 {
+	int i;
+
+	for (i = 0; i < tilemapManager.maxMaps; ++i)
+	{
+		if (tilemapManager.tilemaps[i].active)
+		{
+			return &tilemapManager.tilemaps[i];
+		}
+	}
+}
+
+Bool AddEntityToTileMap(Entity *ent)
+{
+	TileMap *map = GetCurrentTileMap();
+	
 	if (!ent)
 	{
 		return false;
@@ -499,10 +336,10 @@ Bool AddEntityToTileMap(Entity *ent, TileMap *map)
 
 	gf2d_space_add_body(map->mapSpace, &ent->body);
 
-	if (gf2d_line_cmp(ent->actor->name, "Player"))
-	{
-		SetCurrentMapActive(map);
-	}
+	//if (gf2d_line_cmp(ent->actor->name, "Player"))
+	//{
+	//	GetCurrentMap()
+	//}
 
 	map->numEnts++;
 
@@ -536,32 +373,377 @@ void MapUpdate(TileMap *map)
 	gf2d_entity_post_sync_all();
 }
 
-TileMap* GetCurrentMap()
-{
-	int i;
 
-	for (i = 0; i < tilemapManager.maxMaps; ++i)
+TileMap* ParseMapFile(char* filename, TileMapData *data)
+{
+	FILE *file;
+	char buf[GF2DTEXTLEN];
+	TileMap *map = NULL;
+	char *mapName = NULL;
+	char *colorMap = NULL;
+	char *emptyTileName = NULL;
+	char **filenames = NULL;
+	char *fileContents = "";
+	size_t fileSize = 0;
+	int i = 0, n = 0;
+	char c;
+
+
+	file = fopen(filename, "r");
+
+	if (!file)
 	{
-		if (tilemapManager.tilemaps[i].active == 1)
+		slog("Failed to open file %", filename);
+
+		return NULL;
+	}
+
+	fseek(file, 0L, SEEK_END);
+	fileSize = ftell(file);
+	rewind(file);
+	fileContents = malloc(sizeof(char) * fileSize);
+	memset(fileContents, 0, sizeof(char) * fileSize);
+
+	c = fgetc(file);
+
+	while (c != EOF)
+	{
+		fileContents[i++] = c;
+		c = fgetc(file);
+	}
+
+	fileContents[i] = '\0';
+
+	fclose(file);
+
+	data->flag = false;
+
+	while (sscanf(fileContents, "%s\n%n", buf, &n) == 1)
+	{
+		if (buf[0] == '~')
 		{
-			return &tilemapManager.tilemaps[i];
+			//'~' denotes end of important info: text afterwards is ignored
+			break;
+		}
+
+		fileContents += n;
+
+		if (strcmp(buf, "width:") == 0)
+		{
+			sscanf(fileContents, " %s\n%n", buf, &n);
+
+			fileContents += n;
+
+			data->col = atoi(buf);
+		}
+		if (strcmp(buf, "height:") == 0)
+		{
+			sscanf(fileContents, " %s\n%n", buf, &n);
+			
+			fileContents += n;
+
+			data->row = atoi(buf);
+			break;
 		}
 	}
+
+	map = NewTileMap(data->col, data->row);
+
+	while (sscanf(fileContents, " %s\n%n", buf, &n) == 1)
+	{
+		if (buf[0] == '~')
+		{
+			//'~' denotes end of important info: text afterwards is ignored
+			break;
+		}
+		fileContents += n;
+
+		if (strcmp(buf, "numImages:") == 0)
+		{
+			sscanf(fileContents, " %s\n%n", buf, &n);
+
+			fileContents += n; 
+			map->numCells = atoi(buf);
+			continue;
+		}
+		if (strcmp(buf, "cellWidth:") == 0)
+		{
+			sscanf(fileContents, " %s\n%n", buf, &n);
+
+			fileContents += n; 
+			map->cellWidth = atoi(buf);
+			continue;
+		}
+		if (strcmp(buf, "cellHeight:") == 0)
+		{
+			sscanf(fileContents, " %s\n%n", buf, &n);
+
+			fileContents += n; 
+			map->cellHeight = atoi(buf);
+			continue;
+		}
+		if (strcmp(buf, "groundTiles:") == 0)
+		{
+			sscanf(fileContents, " %s\n%n", buf, &n);
+
+			fileContents += n;
+			strncpy(data->mapName, buf, GF2DTEXTLEN);
+
+			map->mapName = data->mapName;
+
+			continue;
+		}
+		if (strcmp(buf, "emptyTile:") == 0)
+		{
+			sscanf(fileContents, " %s\n%n", buf, &n);
+
+			fileContents += n;
+			strncpy(data->emptyTileName, buf, GF2DTEXTLEN);
+
+			map->emptyTileName = data->emptyTileName;
+
+			continue;
+		}
+		if (strcmp(buf, "tilemap:") == 0)
+		{
+			sscanf(fileContents, " %s\n%n", buf, &n);
+
+			fileContents += n;
+			strncpy(data->colorMap, buf, GF2DTEXTLEN);
+
+			continue;
+		}
+		if (strcmp(buf, "tileData:") == 0)
+		{
+			sscanf(fileContents, " %s\n%n", buf, &n);
+
+			fileContents += n;
+			strncpy(data->tileGenInfoName, buf, GF2DTEXTLEN);
+
+			continue;
+
+			break;
+		}
+
+		memset(buf, 0, GF2DTEXTLEN * sizeof(char));
+	}
+
+	return map;
 }
 
-void SetCurrentMapActive(TileMap* map)
+void ParseTileColors(TileMapData *data, Uint32 numCells, Bool gravity)
 {
-	int i;
+	FILE * file = NULL;
+	int i = 0, j = 0, n = 0;
+	char buf[GF2DTEXTLEN];
+	char tempBuf[GF2DTEXTLEN];
+	char c;
+	size_t fileSize = 0;
+	char *fileContents = ""; 
 
-	for (i = 0; i < tilemapManager.maxMaps; ++i)
+	file = fopen(data->tileGenInfoName, "r");
+
+	if (!file)
 	{
-		if (map == &tilemapManager.tilemaps[i])
+		slog("Failed to open file %", data->tileGenInfoName);
+
+		return NULL;
+	}
+
+	fseek(file, 0L, SEEK_END);
+	fileSize = ftell(file);
+	rewind(file);
+	fileContents = malloc(sizeof(char) * fileSize);
+	memset(fileContents, 0, sizeof(char) * fileSize);
+
+	c = fgetc(file);
+
+	while (c != EOF)
+	{
+		fileContents[i++] = c;
+		c = fgetc(file);
+	}
+
+	fileContents[i] = '\0';
+
+	fclose(file);
+
+	if (!gravity)
+		//3 tile types
+	{
+		for (i = 0; i < TILE_TYPES; ++i)
 		{
-			tilemapManager.tilemaps[i].active = 1;
+			while (sscanf(fileContents, " %s\n%n", buf, &n) == 1)
+			{
+				if (j >= numCells || buf == '~')
+				{
+					break;
+				}
+
+				fileContents += n;
+
+				if (sscanf(fileContents, " %i,%i,%i\n%n", &data->tileTypes[j].mappingColor.r, &data->tileTypes[j].mappingColor.g, &data->tileTypes[j].mappingColor.b, &n) == 3)
+				{
+					slog("Mapping color: %i, %i, %i", data->tileTypes[j].mappingColor.r, data->tileTypes[j].mappingColor.g, data->tileTypes[j].mappingColor.b);
+
+					fileContents += n;
+
+					++j;
+				}
+			}
 		}
-		else
+	}
+	else
+	{
+		while (sscanf(fileContents, " %s\n%n", buf, &n) == 1)
 		{
-			tilemapManager.tilemaps[i].active = 0;
+			if (j >= numCells || buf == '~')
+			{
+				break;
+			}
+
+			fileContents += n;
+
+			if (sscanf(fileContents, " %i,%i,%i\n%n", &data->tileTypes[j].mappingColor.r, &data->tileTypes[j].mappingColor.g, &data->tileTypes[j].mappingColor.b, &n) == 3)
+			{
+				slog("Mapping color: %i, %i, %i", data->tileTypes[j].mappingColor.r, data->tileTypes[j].mappingColor.g, data->tileTypes[j].mappingColor.b);
+
+				fileContents += n;
+
+				++j;
+			}
+		}
+	}
+	
+}
+
+void FillMapTiles(TileMapData *data, TileMap * map, Bool gravity)
+{
+	int x, y, ite, i;
+	
+	if (!gravity)
+	{
+		while (!data->flag)
+		{			//3 tile types
+			for (i = 0; i < TILE_TYPES; ++i)
+			{
+				if (map->currentTileFilled.x >= map->numColumns && map->currentTileFilled.y >= map->numRows)
+				{
+					data->flag = true;
+					break;
+				}
+
+				for (y = 0; y < map->numRows; ++y)
+				{
+					for (x = 0; x < map->numColumns; ++x)
+					{
+						for (ite = 0; ite < map->numCells; ++ite)
+						{
+							if (data->colors[(y*map->numColumns) + x].r == 0
+								&& data->colors[(y*map->numColumns) + x].g == 0
+								&& data->colors[(y*map->numColumns) + x].b == 0
+								&& map->map[y][x].filled != 1)
+							{
+								map->map[y][x].active = false;
+
+								map->map[y][x].filled = 1;
+
+								map->map[y][x].offsetInColumn = -1;
+
+								map->map[y][x].sprite = map->mapSpriteSheet;
+
+								map->currentTileFilled.x++;
+								map->currentTileFilled.y++;
+
+								continue;
+							}
+
+							if (data->colors[(y*map->numColumns) + x].r == data->tileTypes[ite].mappingColor.r
+								&& data->colors[(y*map->numColumns) + x].g == data->tileTypes[ite].mappingColor.g
+								&& data->colors[(y*map->numColumns) + x].b == data->tileTypes[ite].mappingColor.b
+								&& !map->map[y][x].active)
+							{
+								map->map[y][x].active = true;
+								map->map[y][x].offsetInColumn = ite;
+								map->map[y][x].sprite = map->mapSpriteSheet;
+
+								map->currentTileFilled.x++;
+								map->currentTileFilled.y++;
+
+								map->map[y][x].filled = 1;
+
+								if (map->map[y][x].offsetInColumn != GROUND_CENTER_1 && map->map[y][x].offsetInColumn != GROUND_CENTER_2 && map->map[y][x].offsetInColumn != INSIDE_CENTER_WALKABLE)
+								{
+									gf2d_space_add_static_shape(map->mapSpace, gf2d_shape_rect((x * map->cellWidth) - (map->cellWidth / 2), (y * map->cellHeight) - (map->cellHeight / 2), map->cellWidth, map->cellHeight));
+								}
+
+								continue;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		while (!data->flag)
+		{
+			if (map->currentTileFilled.x >= map->numColumns && map->currentTileFilled.y >= map->numRows)
+			{
+				data->flag = true;
+				break;
+			}
+
+			for (y = 0; y < map->numRows; ++y)
+			{
+				for (x = 0; x < map->numColumns; ++x)
+				{
+					for (ite = 0; ite < map->numCells; ++ite)
+					{
+						if (data->colors[(y*map->numColumns) + x].r == 0
+							&& data->colors[(y*map->numColumns) + x].g == 0
+							&& data->colors[(y*map->numColumns) + x].b == 0
+							&& map->map[y][x].filled != 1)
+						{
+							map->map[y][x].active = false;
+
+							map->map[y][x].filled = 1;
+
+							map->map[y][x].offsetInColumn = -1;
+
+							map->map[y][x].sprite = map->mapSpriteSheet;
+
+							map->currentTileFilled.x++;
+							map->currentTileFilled.y++;
+
+							continue;
+						}
+
+						if (data->colors[(y*map->numColumns) + x].r == data->tileTypes[ite].mappingColor.r
+							&& data->colors[(y*map->numColumns) + x].g == data->tileTypes[ite].mappingColor.g
+							&& data->colors[(y*map->numColumns) + x].b == data->tileTypes[ite].mappingColor.b
+							&& !map->map[y][x].active)
+						{
+							map->map[y][x].active = true;
+							map->map[y][x].offsetInColumn = ite;
+							map->map[y][x].sprite = map->mapSpriteSheet;
+
+							map->currentTileFilled.x++;
+							map->currentTileFilled.y++;
+
+							map->map[y][x].filled = 1;
+
+							if (map->map[y][x].offsetInColumn == WALKABLE_BLOCK1 || map->map[y][x].offsetInColumn == WALKABLE_BLOCK2 || map->map[y][x].offsetInColumn == WALKABLE_BLOCK3)
+							{
+								gf2d_space_add_static_shape(map->mapSpace, gf2d_shape_rect((x * map->cellWidth) - (map->cellWidth / 2), (y * map->cellHeight) - (map->cellHeight / 2), map->cellWidth, map->cellHeight));
+							}
+
+							continue;
+						}
+					}
+				}
+			}
 		}
 	}
 }

@@ -1,0 +1,10 @@
+name: idle
+filename: images/Player/playerIdle.png
+colorSpecial: 10,255,100,255
+yOffset: 0
+length: 6
+frameWidth: 40
+frameHeight: 81
+frameRate: 0.2
+type: loop
+~

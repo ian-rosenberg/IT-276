@@ -13,6 +13,7 @@ Credits: https://opengameart.org/users/buch for overworld sprites
 #include <SDL_image.h>
 #include <SDL.h>
 #include <stdarg.h>
+#include <malloc.h>
 
 /**
 * @brief Sprite container struct
@@ -121,7 +122,7 @@ Sprite* NewSprite();
 * @param sprite The sprite to load via it's filepath into a surface
 * @returns The colors to work with
 */
-SDL_Color* GetPixelDataFromFile(Sprite* sprite);
+SDL_Color* GetPixelDataFromFile(char* file);
 /**
 * @brief Get pixel data given coordinates
 * @param surface The surface to get pixel from
@@ -138,11 +139,4 @@ Uint32 GetPixel(SDL_Surface *surface, int x, int y);
 * @returns An SDL_Texture that is ready to target
 */
 SDL_Texture* CreateBlankTexture(int width, int height, Uint32 fmt);
-
-/**
-* @brief Get the pixel format of a file
-* @param file The file to use
-* @returns a Uint32 representing the pixel format
-*/
-Uint32 GetPixelFormat(char *file);
 #endif

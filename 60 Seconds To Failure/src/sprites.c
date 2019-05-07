@@ -20,6 +20,7 @@ void SpriteManagerInit(Uint32 max)
 
 	spriteManager.maxSprites = max;
 	spriteManager.spriteList = (Sprite *)malloc(sizeof(Sprite)*max);
+	memset(spriteManager.spriteList, 0, sizeof(Sprite));
 	
 	//Allocate memory for 'maxSprites' number of sprites
 	memset(spriteManager.spriteList, 0, sizeof(Sprite)*max);
@@ -36,7 +37,7 @@ void SpriteManagerInit(Uint32 max)
 }
 
 Sprite* LoadImageToTexture(char *filepath, SDL_Renderer *ren)
-{
+{	
 	slog("Attempting to load %s...", filepath);
 	
 	Sprite *sprite = NULL;

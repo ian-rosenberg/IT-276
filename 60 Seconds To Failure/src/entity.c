@@ -24,7 +24,8 @@ void EntityManagerInit(Uint32 maxEnt)
 
 	memset(&entityManager, 0, sizeof(EntityManager));
 
-	entityManager.entityList = (Entity*)malloc(sizeof(Entity)*maxEnt);
+	entityManager.entityList = malloc(sizeof(Entity) * maxEnt);
+	memset(entityManager.entityList, 0, sizeof(Entity) * maxEnt);
 	if (!entityManager.entityList)
 	{
 		slog("failed to allocate entity list");
@@ -79,7 +80,7 @@ Entity* NewEntity(Actor* act)
 
 			ent->scale = vector2d(1,1);
 			
-			ent->id = entityManager.numEntities;
+			ent->id = i;
 
 			ent->Draw = EntityDraw;
 
@@ -136,6 +137,8 @@ void EntityDrawAll()
 
 void EntityUpdate(Entity *self)
 {
+	Entity *player = NULL;
+	
 	if (!self)
 	{
 		return;
@@ -152,6 +155,13 @@ void EntityUpdate(Entity *self)
 	}
 
 	//update position logic
+
+	player = entity_get_touching_player(self);
+
+	if (player != NULL)
+	{
+		player->touch(player, self);
+	}
 
 	if (self->Update != NULL)
 	{
@@ -173,6 +183,10 @@ void EntityUpdateAll()
 		if (entityManager.entityList[i].Update != NULL)
 		{
 			entityManager.entityList[i].Update(&entityManager.entityList[i]);
+		}
+		else
+		{
+			EntityUpdate(&entityManager.entityList[i]);
 		}
 	}
 }

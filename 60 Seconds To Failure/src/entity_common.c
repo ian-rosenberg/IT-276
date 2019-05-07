@@ -3,7 +3,7 @@
 #include "simple_logger.h"
 //#include "particle_effects.h"
 #include "entity_common.h"
-#include "tilemap.h"
+#include "worlds.h"
 #include "player.h"
 
 Collision entity_scan_hit(Entity *self,Vector2D start,Vector2D end, CollisionFilter filter)
@@ -11,7 +11,7 @@ Collision entity_scan_hit(Entity *self,Vector2D start,Vector2D end, CollisionFil
     Collision c = {0};
     if (!self)return c;
     filter.ignore = &self->body;
-    c = gf2d_collision_trace_space(GetCurrentMap()->mapSpace, start, end ,filter);
+    c = gf2d_collision_trace_space(GetCurrentTileMap()->mapSpace, start, end ,filter);
     gf2d_shape_draw(gf2d_shape_edge(start.x,start.y,end.x,end.y),gf2d_color(255,255,0,255),GetCameraPosition());
     return c;
 }
@@ -86,7 +86,7 @@ int entity_platform_end_check(Entity *self)
     r = gf2d_shape_get_bounds(s);
     gf2d_shape_move(&s,vector2d(r.w * self->facing.x,3));
 
-    collisionList = gf2d_collision_check_space_shape(GetCurrentMap()->mapSpace, s,filter);
+    collisionList = gf2d_collision_check_space_shape(GetCurrentTileMap()->mapSpace, s,filter);
     if (collisionList != NULL)
     {
         gf2d_collision_list_free(collisionList);
@@ -113,7 +113,7 @@ int entity_wall_check(Entity *self, Vector2D dir)
     s = gf2d_body_to_shape(&self->body);
     gf2d_shape_move(&s,dir);
 
-    collisionList = gf2d_collision_check_space_shape(GetCurrentMap()->mapSpace, s,filter);
+    collisionList = gf2d_collision_check_space_shape(GetCurrentTileMap()->mapSpace, s,filter);
     if (collisionList != NULL)
     {
         count = gf2d_list_get_count(collisionList);
@@ -136,7 +136,7 @@ List *entity_get_clipped_entities(Entity *self,Shape s, Uint32 layers, Uint32 te
     filter.ignore = &self->body;
     filter.cliplayer = layers;
     filter.team = team;
-    return gf2d_collision_check_space_shape(GetCurrentMap()->mapSpace, s,filter);
+    return gf2d_collision_check_space_shape(GetCurrentTileMap()->mapSpace, s,filter);
 }
 
 void entity_activate(Entity *self)

@@ -1,6 +1,7 @@
 #include "player.h"
 #include "simple_logger.h"
 #include "camera.h"
+#include "worlds.h"
 
 const int JOYSTICK_DEAD_ZONE = 8000;
 
@@ -24,24 +25,24 @@ void PlayerInit()
 	player.self->maxHealth = 100.0f;
 	player.self->health = player.self->maxHealth;
 
-	player.self->position = vector2d(640, 360);
+	player.self->position = vector2d(32, 224);//load this in
 
 	player.self->shape = gf2d_shape_circle(0, 0,25);
 	
 	gf2d_body_set(&player.self->body,
 		player.self->actor->name,
 		1,
-		WORLD_LAYER,
+		PLAYER_LAYER,
 		ALL_LAYERS,
 		PLAYER_TEAM,
 		player.self->position,
 		player.self->velocity,
 		10,
-		0,
-		2,
+		1,
+		10,
 		&player.self->shape,
 		player.self,
-		PlayerTouch);
+		player.self->body.touch);
 
 	player.self->Draw = PlayerDraw;
 	player.self->Think = PlayerThink;
@@ -62,7 +63,7 @@ void PlayerInit()
 	player.self->actor->animState = State_Idle;
 	player.self->logicalState = State_Idle;
 
-	player.self->actor->currentAnimation = GetAnimationByName("idle");
+	player.self->actor->currentAnimation = GetAnimationByName(playerActor->animations, playerActor->numAnimations, "idle");
 	player.self->actor->currentSprite = player.self->actor->currentAnimation->sprite;
 	player.owner = NULL;
 
@@ -185,16 +186,17 @@ void PlayerThink(Entity *self)
 		player.self->velocity.y != 0.0f)
 	{
 		self->logicalState = State_Walking;
-		self->actor->currentAnimation = GetAnimationByName("walk");
+		self->actor->currentAnimation = GetAnimationByName(player.self->actor->animations, player.self->actor->numAnimations, "walk");
 		self->actor->currentSprite = self->actor->currentAnimation->sprite;
 	}
 	else
 	{
 		self->logicalState = State_Idle;
-		self->actor->currentAnimation = GetAnimationByName("idle");
+		self->actor->currentAnimation = GetAnimationByName(player.self->actor->animations, player.self->actor->numAnimations, "idle");
 		self->actor->currentSprite = self->actor->currentAnimation->sprite;
 	}
 
+	entity_apply_gravity(player.self);
 }
 
 void PlayerDraw(Entity *self)
@@ -241,8 +243,6 @@ void PlayerDraw(Entity *self)
 
 
 	AnimationNextFrame(self->actor->currentAnimation, &self->actor->currentAnimation->currentFrame);
-
-	//gf2d_shape_draw(self->shape, debugColor, resultPos);
 }
 
 void PlayerUpdate(Entity *self)
@@ -285,10 +285,6 @@ void PlayerUpdate(Entity *self)
 		player.self->velocity.y = -player.maxSpeed;
 	}
 
-	gf2d_body_push(&player.self->body, player.self->velocity, player.maxSpeed);
-	entity_world_snap(player.self);
-
-	
 	//set anim state
 	if (self->logicalState != self->actor->animState)
 	{
@@ -296,12 +292,14 @@ void PlayerUpdate(Entity *self)
 		{
 			case State_Walking:
 				self->logicalState = self->actor->animState;
+				self->actor->currentAnimation = GetAnimationByName(player.self->actor->animations, player.self->actor->numAnimations, "walk");
 				self->actor->currentSprite = self->actor->currentAnimation->sprite;
 				self->scaleCenter = vector2d(self->actor->currentAnimation->cellWidth/2, self->actor->currentAnimation->cellHeight/2);
 				break;
 
 			case State_Idle:
 				self->logicalState = self->actor->animState;
+				self->actor->currentAnimation = GetAnimationByName(player.self->actor->animations, player.self->actor->numAnimations, "idle");
 				self->actor->currentSprite = self->actor->currentAnimation->sprite; 
 				self->scaleCenter = vector2d(self->actor->currentAnimation->cellWidth/2, self->actor->currentAnimation->cellHeight/2); 
 				break;
@@ -321,7 +319,7 @@ void PlayerFree()
 	MapRemoveEntity(player.owner, &player.self->body);
 }
 
-int PlayerTouch(struct Body_S *self, List *collision)
+int PlayerTouch(Entity *self, Entity *other)
 {
 	slog("Player touched something");
 }

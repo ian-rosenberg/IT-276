@@ -1,87 +1,70 @@
 #include "worlds.h"
+#include "player.h"
 #include "simple_logger.h"
 
-typedef struct WorldManager_S
+static World gameWorld = { 0 };
+
+void WorldInit(char *oFilename, char *sFilename)
 {
-	World *worldList;
+	//gameWorld.overworld = LoadTileMapFromFile(oFilename, false);
 
-	Uint32 maxWorlds;
-}WorldManager;
+	gameWorld.sideView = LoadTileMapFromFile(sFilename, true);
 
-//local global
-static WorldManager worldManager = { 0 };
+	//gameWorld.overworldPixelWidth = gameWorld.overworld->numColumns * gameWorld.overworld->cellWidth;
+	//gameWorld.overworldPixelHeight = gameWorld.overworld->numRows * gameWorld.overworld->cellHeight;
 
-void WorldManagerInit(Uint32 max)
-{
-	if (!max)
-	{
-		slog("Cannot allocate 0 overworlds");
-
-		return;
-	}
-
-	worldManager.worldList = (World*)malloc(sizeof(World)* max);
-	
-	memset(worldManager.worldList, 0, sizeof(World) * max);
-
-	
-	if (!worldManager.worldList)
-	{
-		slog("failed to allocate overworlds in world manager");
-
-		WorldManagerClose();
-
-		return;
-	}
-
-	worldManager.maxWorlds = max;
-
-	atexit(WorldManagerClose);
-
-	slog("WorldManager system initialized");
+	gameWorld.sidePixelWidth = gameWorld.sideView->numColumns * gameWorld.sideView->cellWidth;
+	gameWorld.sidePixelHeight = gameWorld.sideView->numRows * gameWorld.sideView->cellHeight;
 }
 
-World* WorldInit(char *oFilename, char *sFilename)
+Vector2D GetWorldDimensions(World *world, Bool gravity)
 {
-	World* world = NULL;
+	Vector2D dim = { 0 };
+	if (!gravity)
+	{
+		dim.x = world->overworldPixelWidth;
+		dim.y = world->overworldPixelHeight;
+	}
+	else
+	{
+		dim.x = world->sidePixelWidth;
+		dim.y = world->sidePixelHeight;
+	}
 
-	world = NewWorld();
-	
-	world->overworld = LoadTileMapFromFile(oFilename);
-	world->pixelWidth = world->overworld->numColumns * world->overworld->cellWidth;
-	world->pixelHeight = world->overworld->numRows * world->overworld->cellHeight;
-
-	return world;
+	return dim;
 }
 
-World* NewWorld()
+void CleanUpWorld(World *world)
+{
+	TileMapDelete(world->overworld);
+
+	TileMapDelete(world->sideView);
+
+	memset(world, 0, sizeof(World));
+	
+	free(world);
+}
+
+TileMap* GetCurrentMap()
 {
 	int i;
-
-	for (i = 0; i < worldManager.maxWorlds; i++)
+	Entity *playerEnt = GetPlayerEntity();
+	
+	/*for (i = 0; i < gameWorld.overworld->numEnts; ++i)
 	{
-		if ((worldManager.worldList[i]._inUse == 0) && (worldManager.worldList[i].overworld == NULL))
+		if (&gameWorld.overworld->ents[i] == playerEnt)
 		{
-			return &worldManager.worldList[i];
+			return gameWorld.overworld;
+		}
+	}*/
+
+	for (i = 0; i < gameWorld.sideView->numEnts; ++i)
+	{
+		if (gameWorld.sideView->ents[i].id == playerEnt->id)
+		{
+			return gameWorld.sideView;
 		}
 	}
 
-	slog("Out of worlds to return");
-
 	return NULL;
-}
-
-void WorldManagerClose()
-{
-	memset(worldManager.worldList, 0, sizeof(World) *worldManager.maxWorlds );
-}
-
-Vector2D GetWorldDimensions(World *world)
-{
-	Vector2D dim = { 0 };
-
-	dim.x = world->pixelWidth;
-	dim.y = world->pixelHeight;
-
-	return dim;
 }

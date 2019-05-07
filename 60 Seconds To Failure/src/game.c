@@ -5,10 +5,10 @@
 #include "gui.h"
 #include "sprites.h"
 #include "player.h"
-#include "tilemap.h"
 #include "worlds.h"
 #include "camera.h"
 #include "graphics.h"
+#include "building_entity.h"
 
 
 int main(int agrc, char *arg[])
@@ -16,7 +16,6 @@ int main(int agrc, char *arg[])
 	Bool done = false;
 	SDL_Event e;
 	SDL_Rect dimensions = { 0,0,1280,720 };
-	World *gameWorld;
 	const Uint8 *keys;
 	Vector4D  bgcolor = { 25, 128, 50, 255 };
 
@@ -24,28 +23,19 @@ int main(int agrc, char *arg[])
 	slog("---==== BEGIN ====---");
 
 	GraphicsInit(1280, 720, 0, 16, bgcolor);
-	SetCameraDimensions(dimensions);
 	SpriteManagerInit(1024);
-	AnimationManagerInit(1024);
 	gf2d_text_init("config/font.cfg");
 	GUISetupHUD();
-	ActorManagerInit(1024);
 	EntityManagerInit(1024);
-	TileInit(65536);
-	TileMapInit(4);
-	WorldManagerInit(256);
-	gameWorld = WorldInit("config/overworld.cfg", "");
+	TileMapManagerInit(2);
+	WorldInit("config/overworld.cfg", "config/sideview.cfg");
 	PlayerInit();
 
-	dimensions.w = gameWorld->overworld->cellWidth * gameWorld->overworld->numColumns;
-	dimensions.h = gameWorld->overworld->cellHeight * gameWorld->overworld->numRows;
+	AddEntityToTileMap(GetPlayerEntity());
 
+	SetCameraDimensions(dimensions);
 	SetCameraBounds(dimensions);
 	SetCameraPosition(GetPlayerEntity()->position);
-
-	SetCurrentMapActive(gameWorld->overworld);
-
-	AddEntityToTileMap(GetPlayerEntity(), gameWorld->overworld);
 
 	SDL_ShowCursor(SDL_DISABLE);
 
@@ -66,13 +56,12 @@ int main(int agrc, char *arg[])
 
 		DrawMap(GetCurrentMap());
 
-
 		EntityDrawAll();
 
 		GUIDrawHUD();
 
-		gf2d_space_draw(gameWorld->overworld->mapSpace, GetCameraOffset());
-
+		gf2d_space_draw(GetCurrentMap()->mapSpace, GetCameraOffset());
+		
 		NextFrame();	
 
 		if (keys[SDL_SCANCODE_ESCAPE])
@@ -81,6 +70,7 @@ int main(int agrc, char *arg[])
 		}	
 	}
 
+	//CleanUpWorld(gameWorld);
 
 	slog("---==== END ====---");
 

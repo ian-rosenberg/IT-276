@@ -1,0 +1,10 @@
+name: walk
+filename: images/Player/playerWalk.png
+colorSpecial: 10,255,100,255
+yOffset: 0
+length: 7
+frameWidth: 50
+frameHeight: 82
+frameRate: 0.1714
+type: loop
+~

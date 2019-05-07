@@ -29,7 +29,7 @@ typedef struct Entity_S
 	void(*Draw)(struct Entity_S *self);											/**<called after system entity drawing for custom effects*/
 	void(*Think)(struct Entity_S *self);										/**<called before system updates to make decisions / hand input*/
 	void(*Update)(struct Entity_S *self);										/**<called after system entity update*/
-	int(*touch)(struct Body *self, struct List *collisions);					/**<when this entity touches another entity*/
+	int(*touch)(struct Entity_S *self, struct Entity_S *other);/**<when this entity touches another entity*/
 	void(*activate)(struct Entity_S *self, struct Entity_S *activator);    /**<some entities can be activated by others, doors opened, levels, etc*/
 	int(*damage)(struct Entity_S *self, int amount, struct Entity_S *source);	/**<when this entity takes damage*/
 	void(*die)(struct Entity_S *self);											/**<when this entity dies*/

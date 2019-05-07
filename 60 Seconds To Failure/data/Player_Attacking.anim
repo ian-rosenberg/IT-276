@@ -1,0 +1,10 @@
+name: attacking
+filename: images/Player/playerPunch.png
+colorSpecial: 10,255,100,255
+yOffset: 0
+length: 9
+frameWidth: 74
+frameHeight: 81
+frameRate: 0.12
+type: once
+~
