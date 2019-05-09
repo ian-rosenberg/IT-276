@@ -16,6 +16,11 @@ Collision entity_scan_hit(Entity *self,Vector2D start,Vector2D end, CollisionFil
     return c;
 }
 
+void entity_jump(Entity *self)
+{
+	
+}
+
 void entity_damage(Entity *target,Entity *killer,int damage,float kick)
 {
     if ((!target)||(!killer))
@@ -56,7 +61,7 @@ int entity_camera_view(Entity *self)
 
 void entity_apply_gravity(Entity *self)
 {
-    self->velocity.y += 0.58;
+    self->velocity.y += 9.58;
     if (entity_wall_check(self,vector2d(0,2)))
     {
         if (self->velocity.y > 0)self->velocity.y = 0;

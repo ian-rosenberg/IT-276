@@ -4,6 +4,8 @@
 #include "worlds.h"
 
 const int JOYSTICK_DEAD_ZONE = 8000;
+const Vector2D overworldSpawn = {288,128};
+const Vector2D sideViewSpawn = { 32,320 };
 
 static Player player = { 0 };
 
@@ -25,24 +27,11 @@ void PlayerInit()
 	player.self->maxHealth = 100.0f;
 	player.self->health = player.self->maxHealth;
 
-	player.self->position = vector2d(32, 224);//load this in
+	player.self->position = overworldSpawn;
 
 	player.self->shape = gf2d_shape_circle(0, 0,25);
 	
-	gf2d_body_set(&player.self->body,
-		player.self->actor->name,
-		1,
-		PLAYER_LAYER,
-		ALL_LAYERS,
-		PLAYER_TEAM,
-		player.self->position,
-		player.self->velocity,
-		10,
-		1,
-		10,
-		&player.self->shape,
-		player.self,
-		player.self->body.touch);
+	SetPlayerGravity();
 
 	player.self->Draw = PlayerDraw;
 	player.self->Think = PlayerThink;
@@ -72,13 +61,18 @@ void PlayerInit()
 
 Entity* GetPlayerEntity()
 {
-	return player.self;
+	if (player.self)
+	{
+		return player.self;
+	}
+
+	slog("Player entity not ready!");
+
+	return NULL;
 }
 
 void PlayerThink(Entity *self)
 {
-	SetCameraPosition(self->position);
-
 	if (player.controller != 0 && SDL_GameControllerGetAttached(player.controller)) {
 		Vector2D LeftStick = vector2d(SDL_GameControllerGetAxis(player.controller, SDL_CONTROLLER_AXIS_LEFTX),
 							SDL_GameControllerGetAxis(player.controller, SDL_CONTROLLER_AXIS_LEFTY));
@@ -196,7 +190,12 @@ void PlayerThink(Entity *self)
 		self->actor->currentSprite = self->actor->currentAnimation->sprite;
 	}
 
-	entity_apply_gravity(player.self);
+	if (player.self->body.gravity != 0)
+	{
+		entity_apply_gravity(player.self);
+	}
+
+	SetCameraPosition(self->position);
 }
 
 void PlayerDraw(Entity *self)
@@ -247,7 +246,7 @@ void PlayerDraw(Entity *self)
 
 void PlayerUpdate(Entity *self)
 {
-	Vector2D tilemapDimensions = vector2d(GetCurrentMap()->boundingBox.w, GetCurrentMap()->boundingBox.h);
+	Vector2D tilemapDimensions = vector2d(GetCurrentTileMap()->boundingBox.w, GetCurrentTileMap()->boundingBox.h);
 
 	if (!self)
 	{
@@ -316,7 +315,7 @@ void PlayerFree()
 
 	DeleteActor(player.self->actor);
 
-	MapRemoveEntity(player.owner, &player.self->body);
+	MapRemoveEntity(GetCurrentTileMap(), &player.self->body);
 }
 
 int PlayerTouch(Entity *self, Entity *other)
@@ -324,3 +323,47 @@ int PlayerTouch(Entity *self, Entity *other)
 	slog("Player touched something");
 }
 
+void SetPlayerGravity()
+{
+	if (player.self->body.data != NULL)
+	{
+		slog("Player already has a physics body");
+
+		return;
+	}
+	
+	if(GetGameWorld()->overworld == GetCurrentTileMap())
+	{
+		gf2d_body_set(&player.self->body,
+			player.self->actor->name,
+			1,
+			PLAYER_LAYER,
+			ALL_LAYERS,
+			PLAYER_TEAM,
+			player.self->position,
+			player.self->velocity,
+			10,
+			0,
+			10,
+			&player.self->shape,
+			player.self,
+			player.self->body.touch);
+	}
+	else 
+{
+		gf2d_body_set(&player.self->body,
+			player.self->actor->name,
+			1,
+			PLAYER_LAYER,
+			ALL_LAYERS,
+			PLAYER_TEAM,
+			player.self->position,
+			player.self->velocity,
+			10,
+			1,
+			10,
+			&player.self->shape,
+			player.self,
+			player.self->body.touch);
+	}
+}

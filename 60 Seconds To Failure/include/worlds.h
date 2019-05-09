@@ -9,8 +9,12 @@ typedef struct World_S
 			sidePixelWidth, sidePixelHeight,
 			numSideViews;
 
+	Bool faded, fadeActive;
+
 	TileMap	*overworld;
 	TileMap *sideView;
+
+	Actor *transitionActor;
 }World;
 
 /**
@@ -34,7 +38,12 @@ Vector2D GetWorldDimensions(World *world, Bool gravity);
 void CleanUpWorld(World *world);
 
 /**
-* @brief Return the current tilemap that's active
+* @brief Return the current gameworld
 */
-TileMap* GetCurrentMap();
+World* GetGameWorld();
+
+/**
+* @brief fade transition
+*/
+void Fade();
 #endif

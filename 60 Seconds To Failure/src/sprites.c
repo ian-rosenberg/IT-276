@@ -85,6 +85,7 @@ Sprite* LoadImageToTexture(char *filepath, SDL_Renderer *ren)
 
 	sprite->filepath = filepath;
 	sprite->_refCount++;
+	sprite->surface = s;
 
 	SDL_LockSurface(s);
 
@@ -93,8 +94,6 @@ Sprite* LoadImageToTexture(char *filepath, SDL_Renderer *ren)
 	sprite->pixelFmt = s->format->format;
 
 	SDL_UnlockSurface(s);
-
-	SDL_FreeSurface(s);
 
 	return sprite;
 }
@@ -395,4 +394,11 @@ SDL_Texture* CreateBlankTexture(int width, int height, Uint32 fmt)
 	return tex;
 }
 
+Sprite* LoadImageToTextureWithAlpha(char* filepath, SDL_Renderer *ren)
+{
+	Sprite *s = LoadImageToTexture(filepath, ren);
 
+	SDL_SetTextureBlendMode(s->texture, SDL_BLENDMODE_BLEND);
+
+	return s;
+}

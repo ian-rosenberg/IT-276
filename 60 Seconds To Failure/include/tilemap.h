@@ -84,7 +84,7 @@ typedef struct TileMap_S
 	Sprite			*emptyTile;
 
 	Uint32			numEnts;
-	Entity			*ents;
+	List			*ents;
 	Space			*mapSpace;
 	SDL_Rect		boundingBox, srcRect;
 

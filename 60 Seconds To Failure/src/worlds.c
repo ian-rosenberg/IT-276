@@ -1,20 +1,28 @@
 #include "worlds.h"
-#include "player.h"
+#include "graphics.h"
+#include "camera.h"
 #include "simple_logger.h"
 
 static World gameWorld = { 0 };
 
 void WorldInit(char *oFilename, char *sFilename)
 {
-	//gameWorld.overworld = LoadTileMapFromFile(oFilename, false);
+	gameWorld.overworld = LoadTileMapFromFile(oFilename, false);
 
-	gameWorld.sideView = LoadTileMapFromFile(sFilename, true);
+	gameWorld.faded = 0;
+	gameWorld.fadeActive = 0;
+	//gameWorld.sideView = LoadTileMapFromFile(sFilename, true);
 
-	//gameWorld.overworldPixelWidth = gameWorld.overworld->numColumns * gameWorld.overworld->cellWidth;
-	//gameWorld.overworldPixelHeight = gameWorld.overworld->numRows * gameWorld.overworld->cellHeight;
+	gameWorld.overworldPixelWidth = gameWorld.overworld->numColumns * gameWorld.overworld->cellWidth;
+	gameWorld.overworldPixelHeight = gameWorld.overworld->numRows * gameWorld.overworld->cellHeight;
 
-	gameWorld.sidePixelWidth = gameWorld.sideView->numColumns * gameWorld.sideView->cellWidth;
-	gameWorld.sidePixelHeight = gameWorld.sideView->numRows * gameWorld.sideView->cellHeight;
+	gameWorld.transitionActor = NewActor(0);
+	gameWorld.transitionActor->currentSprite = LoadImageToTextureWithAlpha("images/transitionImage.png", GetRenderer());
+	gameWorld.transitionActor->color = vector4d( 0,0,0,255 );
+	SDL_SetTextureAlphaMod(gameWorld.transitionActor->currentSprite->texture,0);
+
+	//gameWorld.sidePixelWidth = gameWorld.sideView->numColumns * gameWorld.sideView->cellWidth;
+	//gameWorld.sidePixelHeight = gameWorld.sideView->numRows * gameWorld.sideView->cellHeight;
 }
 
 Vector2D GetWorldDimensions(World *world, Bool gravity)
@@ -45,26 +53,41 @@ void CleanUpWorld(World *world)
 	free(world);
 }
 
-TileMap* GetCurrentMap()
+World* GetGameWorld()
 {
-	int i;
-	Entity *playerEnt = GetPlayerEntity();
-	
-	/*for (i = 0; i < gameWorld.overworld->numEnts; ++i)
-	{
-		if (&gameWorld.overworld->ents[i] == playerEnt)
-		{
-			return gameWorld.overworld;
-		}
-	}*/
+	return &gameWorld;
+}
 
-	for (i = 0; i < gameWorld.sideView->numEnts; ++i)
+void Fade()
+{
+	SDL_Rect renderQuad = { GetCameraPosition().x, GetCameraPosition().y, GetRenderDimensions().x, GetRenderDimensions().y };
+	Uint8 alpha = 0;
+	
+	SDL_GetTextureAlphaMod(gameWorld.transitionActor->currentSprite->texture, &alpha);
+
+	if (alpha < 255 && !gameWorld.faded)
 	{
-		if (gameWorld.sideView->ents[i].id == playerEnt->id)
+		alpha += 1;
+		
+		SDL_SetTextureAlphaMod(gameWorld.transitionActor->currentSprite->texture, alpha);
+
+		if (alpha >= 255 && !gameWorld.faded)
 		{
-			return gameWorld.sideView;
+			gameWorld.faded = true;
+		}
+	}
+	else if (alpha > 0 && gameWorld.faded)
+	{
+		alpha -= 1;
+		
+		SDL_SetTextureAlphaMod(gameWorld.transitionActor->currentSprite->texture, alpha);
+
+		if (alpha <= 0 && gameWorld.faded)
+		{
+			gameWorld.fadeActive = false;
+			gameWorld.faded = false;
 		}
 	}
 
-	return NULL;
+	SDL_RenderCopy(GetRenderer(), gameWorld.transitionActor->currentSprite->texture, NULL, &renderQuad);
 }

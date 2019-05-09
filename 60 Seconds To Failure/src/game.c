@@ -34,40 +34,59 @@ int main(int agrc, char *arg[])
 	AddEntityToTileMap(GetPlayerEntity());
 
 	SetCameraDimensions(dimensions);
-	SetCameraBounds(dimensions);
+
+
+	SetCameraBounds(GetCurrentTileMap()->boundingBox);
+	
+	
 	SetCameraPosition(GetPlayerEntity()->position);
 
 	SDL_ShowCursor(SDL_DISABLE);
 
 	while (!done)
-	{		
-		SDL_PumpEvents();
+	{
+		if (!GetGameWorld()->fadeActive)
+		{
+			SDL_PumpEvents();
+		}
 
 		keys = SDL_GetKeyboardState(NULL);
+
+		if (keys[SDL_SCANCODE_0])
+		{
+			GetGameWorld()->fadeActive = true;
+		}
 
 		EntityThinkAll();
 
 		EntityUpdateAll();
 
-		MapUpdate(GetCurrentMap());
+		MapUpdate(GetCurrentTileMap());
 
 		ClearScreen();
 		
 
-		DrawMap(GetCurrentMap());
+		DrawMap(GetCurrentTileMap());
 
 		EntityDrawAll();
 
 		GUIDrawHUD();
 
-		gf2d_space_draw(GetCurrentMap()->mapSpace, GetCameraOffset());
+		gf2d_space_draw(GetCurrentTileMap()->mapSpace, GetCameraOffset());
 		
-		NextFrame();	
 
+		if (GetGameWorld()->fadeActive)
+		{
+			Fade();				
+		}
+
+		NextFrame();
+		
 		if (keys[SDL_SCANCODE_ESCAPE])
 		{
 			done = true;
 		}	
+
 	}
 
 	//CleanUpWorld(gameWorld);

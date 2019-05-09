@@ -7,6 +7,7 @@
 #include "sprites.h"
 #include "camera.h"
 #include "entity.h"
+#include "player.h"
 
 #define TILE_TYPES 3
 
@@ -112,7 +113,7 @@ TileMap* NewTileMap(Uint32 width, Uint32 height)
 	map->numRows = height;
 	map->renderTarget = NULL;
 	map->numEnts = 0;
-	map->ents = NULL;
+	map->ents = gf2d_list_new();
 	map->mapName = NULL;
 
 	map->active = 1;
@@ -166,7 +167,7 @@ TileMap* LoadTileMapFromFile(char* filename, Bool gravity)
 			3,
 			gf2d_rect(0, 0, map->cellWidth* map->numColumns, map->cellHeight * map->numRows),
 			1,
-			vector2d(0, 10),
+			vector2d(0, 1),
 			0.1,
 			0.001);
 	}
@@ -198,16 +199,25 @@ TileMap* LoadTileMapFromFile(char* filename, Bool gravity)
 
 void TileMapDelete(TileMap *map)
 {
-	int i;
+	int i, j;
 
 	for (i = 0; i < map->numEnts; ++i)
 	{
-		gf2d_space_remove_body(map->mapSpace, &map->ents[i].body);
+		gf2d_space_remove_body(map->mapSpace, (Body*)gf2d_list_get_nth(map->ents, i));
 	}
 
 	gf2d_space_free(map->mapSpace);
 
 	memset(map, 0, sizeof(TileMap));
+
+	SpriteDelete(map->renderTarget);
+
+	for (i = 0; i < map->numRows; ++i)
+	{
+		free(map->map[i]);
+	}
+
+	free(map);
 }
 
 void RenderMapToTexture(TileMap *map)
@@ -320,13 +330,11 @@ Bool AddEntityToTileMap(Entity *ent)
 
 	if (map->ents == NULL)
 	{
-		map->ents = malloc(sizeof(Entity));
-		map->ents = ent;
+		map->ents = gf2d_list_new();
 	}
 	else
 	{
-		map->ents = realloc(map->ents, sizeof(map->numEnts + 1));
-		map->ents[map->numEnts] = *ent;//questionable
+		map->ents = gf2d_list_append(map->ents, ent);
 	}
 
 	if (!&ent->body.touch)
@@ -334,12 +342,12 @@ Bool AddEntityToTileMap(Entity *ent)
 		ent->body.touch = body_body_touch;
 	}
 
-	gf2d_space_add_body(map->mapSpace, &ent->body);
+	if (ent == GetPlayerEntity())
+	{
+		SetPlayerGravity();
+	}
 
-	//if (gf2d_line_cmp(ent->actor->name, "Player"))
-	//{
-	//	GetCurrentMap()
-	//}
+	gf2d_space_add_body(map->mapSpace, &ent->body);
 
 	map->numEnts++;
 
@@ -362,6 +370,7 @@ void MapRemoveEntity(TileMap *map, Body *body)
 		return;
 	}
 	gf2d_space_remove_body(map->mapSpace, body);
+	gf2d_body_clear(body);
 
 	map->numEnts--;
 }
@@ -701,9 +710,9 @@ void FillMapTiles(TileMapData *data, TileMap * map, Bool gravity)
 				{
 					for (ite = 0; ite < map->numCells; ++ite)
 					{
-						if (data->colors[(y*map->numColumns) + x].r == 0
-							&& data->colors[(y*map->numColumns) + x].g == 0
-							&& data->colors[(y*map->numColumns) + x].b == 0
+						if (data->colors[(x*map->numColumns) + y].r == 0
+							&& data->colors[(x*map->numColumns) + y].g == 0
+							&& data->colors[(x*map->numColumns) + y].b == 0
 							&& map->map[y][x].filled != 1)
 						{
 							map->map[y][x].active = false;

@@ -21,6 +21,8 @@ typedef struct Player_S
 
 	Vector3D			dimensions;
 
+	Vector2D			enteredFrom;
+
 	int32_t				axisLeftXLock;
 	int32_t				axisLeftYLock;
 	int32_t				axisRightXLock;
@@ -60,5 +62,11 @@ void PlayerUpdate(Entity *self);
 void PlayerFree();
 
 //Test for player collision
-int PlayerTouch(struct Body_S *self, struct List *collision);
+int PlayerTouch(Entity *self, Entity *other);
+
+/**
+* @brief Set the player gravity based on the 
+* current map context
+*/
+void SetPlayerGravity();
 #endif
