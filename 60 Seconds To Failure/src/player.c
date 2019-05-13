@@ -27,7 +27,7 @@ void PlayerInit()
 	player.self->maxHealth = 100.0f;
 	player.self->health = player.self->maxHealth;
 
-	player.self->position = overworldSpawn;
+	player.self->position = sideViewSpawn;
 
 	player.self->shape = gf2d_shape_circle(0, 0,25);
 	

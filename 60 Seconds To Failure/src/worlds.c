@@ -7,22 +7,22 @@ static World gameWorld = { 0 };
 
 void WorldInit(char *oFilename, char *sFilename)
 {
-	gameWorld.overworld = LoadTileMapFromFile(oFilename, false);
+	//gameWorld.overworld = LoadTileMapFromFile(oFilename, false);
 
 	gameWorld.faded = 0;
 	gameWorld.fadeActive = 0;
-	//gameWorld.sideView = LoadTileMapFromFile(sFilename, true);
+	gameWorld.sideView = LoadTileMapFromFile(sFilename, true);
 
-	gameWorld.overworldPixelWidth = gameWorld.overworld->numColumns * gameWorld.overworld->cellWidth;
-	gameWorld.overworldPixelHeight = gameWorld.overworld->numRows * gameWorld.overworld->cellHeight;
+	//gameWorld.overworldPixelWidth = gameWorld.overworld->numColumns * gameWorld.overworld->cellWidth;
+	//gameWorld.overworldPixelHeight = gameWorld.overworld->numRows * gameWorld.overworld->cellHeight;
 
 	gameWorld.transitionActor = NewActor(0);
 	gameWorld.transitionActor->currentSprite = LoadImageToTextureWithAlpha("images/transitionImage.png", GetRenderer());
 	gameWorld.transitionActor->color = vector4d( 0,0,0,255 );
 	SDL_SetTextureAlphaMod(gameWorld.transitionActor->currentSprite->texture,0);
 
-	//gameWorld.sidePixelWidth = gameWorld.sideView->numColumns * gameWorld.sideView->cellWidth;
-	//gameWorld.sidePixelHeight = gameWorld.sideView->numRows * gameWorld.sideView->cellHeight;
+    gameWorld.sidePixelWidth = gameWorld.sideView->numColumns * gameWorld.sideView->cellWidth;
+	gameWorld.sidePixelHeight = gameWorld.sideView->numRows * gameWorld.sideView->cellHeight;
 }
 
 Vector2D GetWorldDimensions(World *world, Bool gravity)
