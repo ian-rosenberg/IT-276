@@ -36,7 +36,6 @@ int main(int agrc, char *arg[])
 
 
 	//WorldInit("config/overworld.cfg", "config/sideview.cfg");
-	//PlayerInit();
 
 	//AddEntityToTileMap(GetPlayerEntity());
 

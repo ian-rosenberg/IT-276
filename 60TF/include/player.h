@@ -33,8 +33,6 @@ void PlayerThink(Entity *self);
 
 void PlayerUpdate(Entity *self);
 
-void PlayerDraw(Entity *self);
-
 /**
 * @brief Move the player based on keyboard inputs
 */

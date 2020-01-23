@@ -5,6 +5,6 @@ yOffset: 0
 length: 6
 frameWidth: 40
 frameHeight: 81
-frameRate: 0.05
+frameRate: 0.1
 type: loop
 ~

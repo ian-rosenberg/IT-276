@@ -29,7 +29,7 @@ void PlayerInit()
 		"idle");
 	player.self->actor->currentSprite = player.self->actor->currentAnimation->sprite;
 
-	player.self->Draw = PlayerDraw;
+	player.self->Draw = EntityDraw;
 	player.self->Think = PlayerThink;
 	//player.self->Update = PlayerUpdate;
 }
@@ -81,23 +81,6 @@ void PlayerUpdate(Entity *self)
 	}
 
 	
-}
-
-void PlayerDraw(Entity *self)
-{
-	DrawSprite(self->actor->currentAnimation->sprite,
-		self->position,
-		&self->scale,
-		NULL,
-		NULL,
-		NULL,
-		NULL,//color shift
-		&self->actor->currentAnimation->currentFrame,
-		self->actor->currentAnimation->yOffset,
-		self->actor->currentAnimation->cellWidth,
-		self->actor->currentAnimation->cellHeight);
-
-	AnimationNextFrame(self->actor->currentAnimation, &self->actor->currentAnimation->currentFrame);
 }
 
 void MovePlayer()

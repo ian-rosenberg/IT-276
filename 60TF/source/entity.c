@@ -118,6 +118,8 @@ void EntityDraw(Entity *self)
 		self->actor->currentAnimation->yOffset,
 		self->actor->currentAnimation->cellWidth,
 		self->actor->currentAnimation->cellHeight);
+
+	AnimationNextFrame(self->actor->currentAnimation, &self->actor->currentAnimation->currentFrame);
 }
 
 void EntityDrawAll()
@@ -175,7 +177,7 @@ void EntityUpdateAll()
 			continue;
 		}
 
-		if (entityManager.entityList[i].Update != NULL)
+		if (entityManager.entityList[i].Update != NULL && entityManager.entityList[i].Update != EntityUpdate)
 		{
 			entityManager.entityList[i].Update(&entityManager.entityList[i]);
 		}
@@ -188,7 +190,7 @@ void EntityThinkAll()
 	for (i = 0; i < entityManager.maxEntities; i++)
 	{
 		if (entityManager.entityList[i]._inUse == 0)continue;
-		if (entityManager.entityList[i].Think != NULL)
+		if (entityManager.entityList[i].Think != NULL && entityManager.entityList[i].Think != EntityThink)
 		{
 			entityManager.entityList[i].Think(&entityManager.entityList[i]);
 		}
