@@ -1,0 +1,50 @@
+d:\mydocuments\gf2d work\60tf\60tf\source\game.c:22: ---==== BEGIN ====---
+d:\mydocuments\gf2d work\60tf\60tf\source\graphics.c:41: SDL initialization success!
+d:\mydocuments\gf2d work\60tf\60tf\source\graphics.c:126: Graphics initialized successfully
+d:\mydocuments\gf2d work\60tf\60tf\source\sprites.c:40: sprite system initialized
+d:\mydocuments\gf2d work\60tf\60tf\source\gf2d_text.c:171: font library loaded with 9 fonts
+d:\mydocuments\gf2d work\60tf\60tf\source\gf2d_text.c:48: text system initialized
+d:\mydocuments\gf2d work\60tf\60tf\source\entity.c:36: entity system initialized
+d:\mydocuments\gf2d work\60tf\60tf\source\sprites.c:48: Attempting to load images/Overworld/emptyTile.png...
+d:\mydocuments\gf2d work\60tf\60tf\source\sprites.c:110: images/Overworld/emptyTile.png loaded successfully!
+d:\mydocuments\gf2d work\60tf\60tf\source\sprites.c:48: Attempting to load images/Overworld/groundTiles.png...
+d:\mydocuments\gf2d work\60tf\60tf\source\sprites.c:110: images/Overworld/groundTiles.png loaded successfully!
+d:\mydocuments\gf2d work\60tf\60tf\source\sprites.c:428: Created a blank target texture
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 255, 0, 0
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 255, 106, 0
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 255, 216, 0
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 182, 255, 0
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 76, 255, 0
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 0, 255, 144
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 0, 255, 255
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 0, 148, 255
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 0, 38, 255
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 72, 0, 255
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 178, 0, 255
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 255, 0, 220
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 255, 0, 110
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 128, 128, 128
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 91, 127, 0
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 127, 106, 0
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 127, 0, 0
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 127, 51, 0
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 0, 127, 14
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 0, 74, 127
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 0, 223, 0
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 31, 191, 0
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 63, 159, 0
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 95, 127, 0
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 127, 95, 0
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 33, 0, 127
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 87, 0, 127
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 127, 0, 110
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 255, 178, 127
+d:\mydocuments\gf2d work\60tf\60tf\source\tilemap.c:601: Mapping color: 127, 0, 55
+d:\mydocuments\gf2d work\60tf\60tf\source\actor.c:24: using new actor
+d:\mydocuments\gf2d work\60tf\60tf\source\sprites.c:48: Attempting to load images/Player/playerPunch.png...
+d:\mydocuments\gf2d work\60tf\60tf\source\sprites.c:110: images/Player/playerPunch.png loaded successfully!
+d:\mydocuments\gf2d work\60tf\60tf\source\sprites.c:48: Attempting to load images/Player/playerIdle.png...
+d:\mydocuments\gf2d work\60tf\60tf\source\sprites.c:110: images/Player/playerIdle.png loaded successfully!
+d:\mydocuments\gf2d work\60tf\60tf\source\sprites.c:48: Attempting to load images/Player/playerWalk.png...
+d:\mydocuments\gf2d work\60tf\60tf\source\sprites.c:110: images/Player/playerWalk.png loaded successfully!
+d:\mydocuments\gf2d work\60tf\60tf\source\actor.c:229: Loaded actor Player

@@ -1,0 +1,41 @@
+﻿Build started 1/22/2020 9:58:03 PM.
+     1>Project "D:\MyDocuments\GF2D Work\60TF\60TF\60TF.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt source\entity.c
+         entity.c
+     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(35): warning C4113: 'void (__cdecl *)()' differs in parameter lists from 'void (__cdecl *)(void)'
+     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(38): warning C4113: 'void (__cdecl *)()' differs in parameter lists from 'void (__cdecl *)(void)'
+     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(61): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(87): warning C4113: 'void (__cdecl *)(Entity *)' differs in parameter lists from 'void (__cdecl *)(TileMap *,Entity_S *)'
+     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(117): warning C4244: 'function' : conversion from 'float' to 'Uint32', possible loss of data
+     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(127): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(171): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(188): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(214): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(223): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(236): warning C4101: 'i' : unreferenced local variable
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\MyDocuments\GF2D Work\60TF\Debug\60TF.exe" /INCREMENTAL /NOLOGO SDL2.lib SDL2main.lib SDL2_image.lib SDL2_mixer.lib SDL2_ttf.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\MyDocuments\GF2D Work\60TF\Debug\60TF.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\MyDocuments\GF2D Work\60TF\Debug\60TF.lib" /MACHINE:X86 Debug\actor.obj
+         Debug\animations.obj
+         Debug\entity.obj
+         Debug\game.obj
+         Debug\gameworld.obj
+         Debug\gf2d_color.obj
+         Debug\gf2d_draw.obj
+         Debug\gf2d_list.obj
+         Debug\gf2d_shape.obj
+         Debug\gf2d_text.obj
+         Debug\gf2d_vector.obj
+         Debug\graphics.obj
+         Debug\gui.obj
+         Debug\input.obj
+         Debug\player.obj
+         Debug\simple_logger.obj
+         Debug\sprites.obj
+         Debug\tilemap.obj
+         60TF.vcxproj -> D:\MyDocuments\GF2D Work\60TF\Debug\60TF.exe
+     1>Done Building Project "D:\MyDocuments\GF2D Work\60TF\60TF\60TF.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.31
