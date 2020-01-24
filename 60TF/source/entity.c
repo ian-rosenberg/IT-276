@@ -71,7 +71,11 @@ Entity* NewEntity(Actor* act)
 			
 			ent->actor = act;
 			ent->artState = ART_INPROGRESS;
-			
+			ent->curState = State_Idle;
+			ent->prevState = State_None;
+			ent->scale = act->scale;
+			ent->facing = vector2d(0, 0);
+
 			ent->id = i;
 
 			ent->gravityEnabled = 0;
@@ -97,6 +101,8 @@ Entity* NewEntity(Actor* act)
 
 void EntityDraw(Entity *self)
 {
+	Vector2D centerScalePoint;
+
 	if (!self)
 	{
 		return;
@@ -107,19 +113,22 @@ void EntityDraw(Entity *self)
 		return;
 	}
 
+	centerScalePoint = vector2d(self->actor->currentAnimation->cellWidth / 2.0f,
+		self->actor->currentAnimation->cellHeight / 2.0f);
+
 	DrawSprite(self->actor->currentSprite,
 		self->position,
 		&self->scale,
-		&self->scaleCenter,
+		&centerScalePoint,
 		NULL,
-		NULL,
+		&self->facing,
 		NULL,
 		self->actor->currentAnimation->currentFrame,
 		self->actor->currentAnimation->yOffset,
 		self->actor->currentAnimation->cellWidth,
 		self->actor->currentAnimation->cellHeight);
 
-	AnimationNextFrame(self->actor->currentAnimation, &self->actor->currentAnimation->currentFrame);
+	self->actor->animState = AnimationNextFrame(self->actor->currentAnimation, &self->actor->currentAnimation->currentFrame);
 }
 
 void EntityDrawAll()
@@ -133,7 +142,7 @@ void EntityDrawAll()
 			continue;
 		}
 
-		if (entityManager.entityList[i].Draw != NULL)
+		if (entityManager.entityList[i].Draw != NULL && entityManager.entityList[i].Draw == EntityDraw)
 		{
 			//slog("Entity name: %s", entityManager.entityList[i].actor->name);
 			entityManager.entityList[i].Draw(&entityManager.entityList[i]);
@@ -142,7 +151,7 @@ void EntityDrawAll()
 }
 
 void EntityUpdate(Entity *self)
-{	
+{
 	if (!self)
 	{
 		return;
@@ -157,8 +166,6 @@ void EntityUpdate(Entity *self)
 	{
 		EntityFree(self);
 	}
-
-	//update position logic
 
 	if (self->Update != NULL && self->Update != EntityUpdate)
 	{
@@ -265,6 +272,36 @@ Entity* EntityIterate(Entity *start)
 	return NULL;
 }
 
+void EntityNextAnimation(Entity *self, State newState)
+{
+	switch (newState)
+	{
+		case State_Idle:
+			SetEntityAnimation(self, ANIM_IDLE);
+			break;
+
+		case State_Walking:
+			SetEntityAnimation(self, ANIM_WALKING);
+			break;
+		
+		case State_Attacking:
+			SetEntityAnimation(self, ANIM_ATTACKING);
+			break;
+
+		case State_Hurt:
+			SetEntityAnimation(self, ANIM_HURT);
+			break;
+
+		case State_Death:
+			SetEntityAnimation(self, ANIM_DEATH);
+			break;
+
+		case State_Dead:
+			SetEntityAnimation(self, ANIM_DEAD);
+			break;
+	}
+}
+
 int IsEntityPtrValid(void *p)
 {
 	Entity *ent;
@@ -273,4 +310,15 @@ int IsEntityPtrValid(void *p)
 	if (ent < entityManager.entityList)return 0;
 	if (ent >= &entityManager.entityList[entityManager.maxEntities])return 0;
 	return 1;
+}
+
+void SetEntityAnimation(Entity *self, const char* anim)
+{
+	self->actor->currentAnimation = GetAnimationByName(self->actor->animations, self->actor->numAnimations, anim);
+
+	self->actor->currentSprite = self->actor->currentAnimation->sprite;
+
+	self->actor->currentAnimation->currentFrame = 0;
+
+	return;
 }

@@ -2,7 +2,6 @@
 #define	__ENTITY__
 
 #include "actor.h"
-#include "input.h"
 
 typedef struct Entity_S
 {
@@ -10,8 +9,8 @@ typedef struct Entity_S
 	Uint16					gravityEnabled;
 	Uint64					id;	
 
-	State					logicalState; // Same enum as used for animations, used here for logic of those states
-
+	State					prevState; // Same enum as used for animations, used here for logic of those states
+	State					curState;
 
 	AnimationReturnType		artState;
 
@@ -25,9 +24,7 @@ typedef struct Entity_S
 	Vector2D				velocity;
 	Vector2D				position;
 	Vector2D				scale;												/**<scale to draw sprite at*/
-	Vector2D				scaleCenter;										/**<where to scale sprite from*/
 	Vector3D				rotation;											/**<how to rotate the sprite*/
-	Vector2D				flip;												/**<if to flip the sprite*/
 	Vector2D				facing;												/**<direction the entity is facing*/
 	Vector2D				spawnPos;
 		
@@ -128,6 +125,20 @@ Entity* GetEntityByID(Uint32 id);
  * @return the next entity in the list that is active or NULL when there are not more
  */
 Entity* EntityIterate(Entity *start);
+
+/*
+* @brief Handle entity animation transitions
+* @param self The entity to animate
+* @param newState The state to transition to
+*/
+void EntityNextAnimation(Entity *self, State newState);
+
+/*
+* @brief Set an entity's current animation
+* @param self The entity to animate
+* @param anim The name of the animation to switch to 
+*/
+void SetEntityAnimation(Entity *self, const char* anim);
 
 /**
  * @brief check to see if a given pointer points to an entity in the entity system

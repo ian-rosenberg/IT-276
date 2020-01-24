@@ -5,9 +5,9 @@
 #include "graphics.h"
 #include "sprites.h                                                                                                                                                                          "
 #include "simple_logger.h"
-#include "input.h"
 #include "entity.h"
 #include "tilemap.h"
+#include "player.h"
 
 
 int main(int agrc, char *arg[])
@@ -17,6 +17,7 @@ int main(int agrc, char *arg[])
 	const Uint8 *keys = NULL;
 	Vector4D  bgcolor = { 25, 128, 50, 255 };
 	TileMap *map = NULL;
+	PlayerInput inputState;
 
 	init_logger("60TF.log");
 	slog("---==== BEGIN ====---");
@@ -47,12 +48,24 @@ int main(int agrc, char *arg[])
 
 	//SetCameraPosition(GetPlayerEntity()->position);
 
+
 	SDL_ShowCursor(SDL_DISABLE);
 
 	while (!done)
 	{
-		done = HandleInput(keys) == Quit ? true : false;
-				
+		inputState = HandleInput(keys);
+
+		SetInputState(inputState);
+		
+		if (inputState == Quit)
+		{
+			done = true;
+		}
+		else
+		{
+			done = false;
+		}
+
 		EntityThinkAll();
 
 		EntityUpdateAll();

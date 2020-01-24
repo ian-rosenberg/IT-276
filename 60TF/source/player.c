@@ -1,10 +1,52 @@
 #include "player.h"
 #include "graphics.h"
 
-#define PLAYER_SPEED 40
-#define PLAYER_ACCELERATION 0.1667
+#define PLAYER_SPEED 5
+#define PLAYER_ACCELERATION 0.25
 
 static Player player = { 0 };
+
+PlayerInput HandleInput(const Uint8 *keys)
+{
+	SDL_PumpEvents();
+
+	keys = SDL_GetKeyboardState(NULL);
+
+	if (keys[SDL_SCANCODE_ESCAPE])
+	{
+		return Quit;
+	}
+	if (keys[SDL_SCANCODE_W])
+	{
+		return MoveNorth;
+	}
+	if (keys[SDL_SCANCODE_A])
+	{
+		return MoveWest;
+	}
+	if (keys[SDL_SCANCODE_S])
+	{
+		return MoveSouth;
+	}
+	if (keys[SDL_SCANCODE_D])
+	{
+		return MoveEast;
+	}
+	if (keys[SDL_SCANCODE_Q])
+	{
+		return Cancel;
+	}
+	if (keys[SDL_SCANCODE_E])
+	{
+		return Interact;
+	}
+	if (keys[SDL_SCANCODE_F])
+	{
+		return Menu;
+	}
+
+	return None;
+}
 
 void PlayerInit()
 {
@@ -12,7 +54,6 @@ void PlayerInit()
 
 	player.self = NewEntity(pActor);
 	player.self->actor->animState = State_Idle;
-	player.self->logicalState = State_Idle;
 
 	player.controller = SDL_GameControllerOpen(0);
 
@@ -31,41 +72,44 @@ void PlayerInit()
 
 	player.self->Draw = EntityDraw;
 	player.self->Think = PlayerThink;
-	//player.self->Update = PlayerUpdate;
+	player.self->Update = PlayerUpdate;
 }
 
 void PlayerThink(Entity *self)
 {
-	PlayerInput inputState = HandleInput(player.keys);
-
+	if (player.curInputState == player.prevInputState)
+	{
+		return;
+	}
+	
 	player.plannedMovement.x = 0;
 	player.plannedMovement.y = 0;
 
-	if ((inputState & Interact) == Interact)
+	if (player.curInputState == Interact)
 	{
 
 	}
-	if ((inputState & Cancel) == Cancel)
+	if (player.curInputState == Cancel)
 	{
 
 	}
-	if ((inputState & Menu) == Menu)
+	if (player.curInputState == Menu)
 	{
 
 	}
-	if ((inputState & MoveNorth) == MoveNorth)
+	if (player.curInputState == MoveNorth)
 	{
 		player.plannedMovement.y = -1;
 	}
-	if ((inputState & MoveSouth) == MoveSouth)
+	if (player.curInputState == MoveSouth)
 	{
 		player.plannedMovement.y = 1;
 	}
-	if ((inputState & MoveEast) == MoveEast)
+	if (player.curInputState == MoveEast)
 	{
 		player.plannedMovement.x = 1;
 	}
-	if ((inputState & MoveWest) == MoveWest)
+	if (player.curInputState == MoveWest)
 	{
 		player.plannedMovement.x = -1;
 	}
@@ -73,44 +117,60 @@ void PlayerThink(Entity *self)
 
 void PlayerUpdate(Entity *self)
 {
-	MovePlayer();
-
 	if (player.self->gravityEnabled)
 	{
-		//ApplyGravity();
+		MovePlayerGravity();
 	}
-
-	
-}
-
-void MovePlayer()
-{
-	if (player.plannedMovement.x != 0)
+	else
 	{
-		player.self->velocity.x += player.self->speed * player.plannedMovement.x;
-		player.self->speed += PLAYER_ACCELERATION * player.plannedMovement.x;
-
-		if (player.self->speed > player.self->maxSpeed)
+		MovePlayerTopDown();
+		
+		if (player.prevInputState != player.curInputState)
 		{
-			if (player.self->velocity.x < 0)
+			if (player.plannedMovement.x > 0)
 			{
-				player.self->speed = -player.self->maxSpeed;
+				player.self->facing.x = 0;
+			}
+			else if (player.plannedMovement.x < 0)
+			{
+				player.self->facing.x = 1;
+			}
+			
+			if (player.plannedMovement.x != 0 || player.plannedMovement.y != 0)
+			{	
+				EntityNextAnimation(player.self, State_Walking);
 			}
 			else
 			{
-				player.self->speed = player.self->maxSpeed;
+				EntityNextAnimation(player.self, State_Idle);
 			}
 		}
+	}	
+}
+
+void SetInputState(PlayerInput state)
+{
+	player.prevInputState = player.curInputState;
+
+	player.curInputState = state;
+}
+
+void MovePlayerGravity()
+{
+	/*if (player.plannedMovement.x == 1.0f || player.plannedMovement.x == -1.0f)
+	{
+		player.self->velocity.x += player.self->speed * player.plannedMovement.x;
+		player.self->speed += PLAYER_ACCELERATION * player.plannedMovement.x;
 	}
 	else
 	{
 		if (player.self->velocity.x < -0.75f)
 		{
-			player.self->velocity.x += 1.5f;
+			player.self->velocity.x += PLAYER_ACCELERATION;
 		}
 		else if (player.self->velocity.x > 0.75f)
 		{
-			player.self->velocity.x -= 1.5f;
+			player.self->velocity.x -= PLAYER_ACCELERATION;
 		}
 		else
 		{
@@ -118,5 +178,17 @@ void MovePlayer()
 		}
 	}
 
-	player.self->position.x += player.self->velocity.x * GetFrameDelay();
+	player.self->position.x += player.self->velocity.x * GetFrameDelay() * PLAYER_ACCELERATION;	*/
+}
+
+void MovePlayerTopDown()
+{
+	if (player.plannedMovement.x != 0)
+	{
+		player.self->position.x += PLAYER_ACCELERATION * GetFrameDelay() * player.plannedMovement.x;
+	}
+	if (player.plannedMovement.y != 0)
+	{
+		player.self->position.y += PLAYER_ACCELERATION * GetFrameDelay() * player.plannedMovement.y;
+	}
 }

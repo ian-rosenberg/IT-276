@@ -29,6 +29,7 @@ Actor* NewActor(Uint32 numAnim)
 	act->color = vector4d(0, 0, 0, 0);
 	act->numAnimations = numAnim;
 	act->scale = vector2d(0, 0);
+	act->animState = ART_LOOPING;
 
 	for (j = 0; j < numAnim; ++j)
 	{

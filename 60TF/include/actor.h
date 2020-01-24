@@ -5,8 +5,17 @@
 
 #include "animations.h"
 
+
+#define ANIM_IDLE "idle"
+#define ANIM_WALKING "walk"
+#define ANIM_ATTACKING "attack"
+#define ANIM_HURT "hurt"
+#define ANIM_DEATH "death"
+#define ANIM_DEAD "dead"
+
 typedef enum
 {
+	State_None,
 	State_Idle,
 	State_Walking,
 	State_Attacking,
@@ -32,23 +41,23 @@ typedef struct AnimationData_S
 
 typedef struct Actor_S
 {
-	Uint8			_inUse;
+	Uint8				_inUse;
+		
+	char				*name;
 
-	char			*name;
+	Vector2D			scale;
 
-	Vector2D		scale;
+	Sprite				*currentSprite;
 
-	Sprite			*currentSprite;
+	Vector4D			color;
 
-	Vector4D		color;
+	Animation			*animations;
 
-	Animation		*animations;
+	Animation			*currentAnimation;
 
-	Animation		*currentAnimation;
+	Uint32				numAnimations;
 
-	Uint32			numAnimations;
-
-	State			animState;
+	AnimationReturnType	animState;
 }Actor;
 
 /**

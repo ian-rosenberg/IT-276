@@ -2,45 +2,43 @@
 
 PlayerInput HandleInput(const Uint8 *keys)
 {
-	PlayerInput flags;
-	
 	SDL_PumpEvents();
 
 	keys = SDL_GetKeyboardState(NULL);
 
 	if (keys[SDL_SCANCODE_ESCAPE])
 	{
-		flags |= Quit;
+		return Quit;
 	}
 	if (keys[SDL_SCANCODE_W])
 	{
-		flags |= MoveNorth;
+		return MoveNorth;
 	}
 	if (keys[SDL_SCANCODE_A])
 	{
-		flags |= MoveWest;
+		return MoveWest;
 	}
 	if (keys[SDL_SCANCODE_S])
 	{
-		flags |= MoveSouth;
+		return MoveSouth;
 	}
 	if (keys[SDL_SCANCODE_D])
 	{
-		flags |= MoveEast;
+		return MoveEast;
 	}
 	if (keys[SDL_SCANCODE_Q])
 	{
-		flags |= Cancel;
+		return Cancel;
 	}
 	if (keys[SDL_SCANCODE_E])
 	{
-		flags |= Interact;
+		return Interact;
 	}
 	if (keys[SDL_SCANCODE_F])
 	{
-		flags |= Menu;
+		return Menu;
 	}
-
-	return flags;
+	
+	return NULL;
 }
 
