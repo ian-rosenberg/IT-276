@@ -2,7 +2,6 @@
 #define __PLAYER__
 
 #include "entity.h"
-#include "tilemap.h"
 
 typedef enum
 {
@@ -27,8 +26,6 @@ typedef struct Player_S
 {		
 	Entity				*self;
 
-	TileMap				*owner;
-
 	SDL_GameController	*controller;
 
 	PlayerInput			curInputState;
@@ -52,6 +49,8 @@ void PlayerInit();
 
 void PlayerThink(Entity *self);
 
+void PlayerDraw(Entity *self);
+
 void PlayerUpdate(Entity *self);
 
 void SetInputState(PlayerInput state);
@@ -62,5 +61,7 @@ void SetInputState(PlayerInput state);
 void MovePlayerTopDown();
 
 void MovePlayerGravity();
+
+Entity* GetPlayerEntity();
 
 #endif

@@ -142,7 +142,7 @@ void EntityDrawAll()
 			continue;
 		}
 
-		if (entityManager.entityList[i].Draw != NULL && entityManager.entityList[i].Draw == EntityDraw)
+		if (entityManager.entityList[i].Draw != NULL)
 		{
 			//slog("Entity name: %s", entityManager.entityList[i].actor->name);
 			entityManager.entityList[i].Draw(&entityManager.entityList[i]);
@@ -167,7 +167,7 @@ void EntityUpdate(Entity *self)
 		EntityFree(self);
 	}
 
-	if (self->Update != NULL && self->Update != EntityUpdate)
+	if (self->Update != NULL)
 	{
 		self->Update(self);
 	}
@@ -184,7 +184,7 @@ void EntityUpdateAll()
 			continue;
 		}
 
-		if (entityManager.entityList[i].Update != NULL && entityManager.entityList[i].Update != EntityUpdate)
+		if (entityManager.entityList[i].Update != NULL)
 		{
 			entityManager.entityList[i].Update(&entityManager.entityList[i]);
 		}
@@ -224,6 +224,19 @@ void EntityFreeAll()
 	{
 		EntityFree(&entityManager.entityList[i]);
 	}
+}
+
+Bool EntityEntityTouch(Entity *self, Entity *other)
+{
+	if (self->boundingBox.x < other->boundingBox.x + other->actor->currentAnimation->sprite->width &&
+		self->boundingBox.x + self->actor->currentAnimation->sprite->width > other->boundingBox.x &&
+		self->boundingBox.y < other->boundingBox.y + other->actor->currentAnimation->sprite->height &&
+		other->boundingBox.y + other->actor->currentAnimation->sprite->height > other->boundingBox.y)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 Entity* GetEntityByID(Uint32 id)

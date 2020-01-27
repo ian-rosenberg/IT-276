@@ -37,12 +37,15 @@ typedef struct Tile_S
 	Sprite				*sprite;
 	Vector2D			tilePos;
 
+	Rect				boundingBox;
+
 	SDL_Color			color;
 	SDL_Color			mappingColor;
 
 	Uint32				offsetInColumn;
 
 	Bool				active;
+	Bool				walkable;
 }Tile;
 
 typedef struct TileMapData_S {
@@ -182,4 +185,12 @@ void ParseTileColors(TileMapData *data, Uint32 numCells);
 * @param gravity If this is true, then the map is a sideView
 */
 void FillMapTiles(TileMapData *data, TileMap * map);
+
+/*
+* @brief Handle collisions between entities and non-walkable tiles
+* in the overworld tilemap
+* @param self The tile that is being collided with
+* @param other The colliding entity
+*/
+Bool EntityTileTouch(Tile *self, Entity *other);
 #endif

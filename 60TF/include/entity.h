@@ -2,10 +2,12 @@
 #define	__ENTITY__
 
 #include "actor.h"
+#include "gf2d_shape.h"
 
 typedef struct Entity_S
 {
 	Uint8					_inUse;
+	Uint8					team;
 	Uint16					gravityEnabled;
 	Uint64					id;	
 
@@ -16,7 +18,7 @@ typedef struct Entity_S
 
 	Actor					*actor;
 
-	SDL_Rect			    srcRect;
+	Rect					boundingBox;
 
 	float					speed;
 	float					maxSpeed;
@@ -77,6 +79,13 @@ void EntityDraw(Entity *self);
 * @brief free an entity
 */
 void EntityFree(Entity *self);
+
+/*
+* @brief Handle collisions between entities
+* @param self The lhs entity
+* @param other The rhs entity
+*/
+Bool EntityEntityTouch(Entity *self, Entity *other);
 
 /**
 * @brief Render all entites to screen

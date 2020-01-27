@@ -3,11 +3,12 @@
 #include <stdlib.h>
 
 #include "graphics.h"
-#include "sprites.h                                                                                                                                                                          "
+#include "sprites.h"
 #include "simple_logger.h"
 #include "entity.h"
 #include "tilemap.h"
 #include "player.h"
+#include "camera.h"
 
 
 int main(int agrc, char *arg[])
@@ -34,6 +35,8 @@ int main(int agrc, char *arg[])
 	map = LoadTileMapFromFile("config/overworld.cfg");
 
 	PlayerInit();
+
+	CameraInit(GetPlayerEntity()->position, GetRenderDimensions(), vector2d(GetCurrentTileMap()->boundingBox.w, GetCurrentTileMap()->boundingBox.h));
 
 
 	//WorldInit("config/overworld.cfg", "config/sideview.cfg");
@@ -70,7 +73,9 @@ int main(int agrc, char *arg[])
 
 		EntityUpdateAll();
 
-		DrawMap(GetCurrentTileMap());
+		CameraMove(GetPlayerEntity());
+
+		DrawMap(GetCurrentTileMap(), CameraMove(GetPlayerEntity()));
 
 		EntityDrawAll();
 		

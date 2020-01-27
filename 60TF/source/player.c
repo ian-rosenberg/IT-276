@@ -1,5 +1,6 @@
 #include "player.h"
 #include "graphics.h"
+#include "camera.h"
 
 #define PLAYER_SPEED 5
 #define PLAYER_ACCELERATION 0.25
@@ -73,6 +74,7 @@ void PlayerInit()
 	player.self->Draw = EntityDraw;
 	player.self->Think = PlayerThink;
 	player.self->Update = PlayerUpdate;
+	player.self->Draw = PlayerDraw;
 }
 
 void PlayerThink(Entity *self)
@@ -191,4 +193,43 @@ void MovePlayerTopDown()
 	{
 		player.self->position.y += PLAYER_ACCELERATION * GetFrameDelay() * player.plannedMovement.y;
 	}
+}
+
+void PlayerDraw(Entity *self)
+{
+	Vector2D centerScalePoint;
+	Vector2D resultPos = { 0 };
+
+	if ((self->health / self->maxHealth) < 0.25f)
+	{
+		self->actor->color = vector4d(SDL_MAX_UINT8, 0, 0, SDL_MAX_UINT8);
+	}
+	else
+	{
+		self->actor->color = vector4d(SDL_MAX_UINT8, SDL_MAX_UINT8, SDL_MAX_UINT8, SDL_MAX_UINT8);
+	}
+
+	centerScalePoint = vector2d(self->actor->currentAnimation->cellWidth / 2.0f,
+		self->actor->currentAnimation->cellHeight / 2.0f);
+
+	vector2d_sub(resultPos, self->position, GetCameraPosition());
+
+	DrawSprite(self->actor->currentSprite,
+		resultPos,
+		&self->scale,
+		&centerScalePoint,
+		&self->rotation,
+		&self->facing,
+		&self->actor->color,
+		self->actor->currentAnimation->currentFrame,
+		self->actor->currentAnimation->yOffset,
+		self->actor->currentAnimation->cellWidth,
+		self->actor->currentAnimation->cellHeight);
+
+	self->actor->animState = AnimationNextFrame(self->actor->currentAnimation, &self->actor->currentAnimation->currentFrame);
+}
+
+Entity* GetPlayerEntity()
+{
+	return player.self;
 }
