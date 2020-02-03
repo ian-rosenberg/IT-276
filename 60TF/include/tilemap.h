@@ -7,6 +7,7 @@
 #include "gf2d_types.h"
 #include "gf2d_list.h"
 #include "gf2d_vector.h"
+#include "gf2d_shape.h"
 
 typedef enum {
 	Ground = 0,
@@ -88,6 +89,8 @@ typedef struct TileMap_S
 	Uint32			numEnts;
 	Entity			*ents;
 	SDL_Rect		boundingBox, srcRect;
+
+	Uint16			numBlockingTiles;
 
 	char			*backgroundImage;    /**<background image for this level*/
 	char			*backgroundMusic;    /**<background music for this level*/
@@ -186,11 +189,4 @@ void ParseTileColors(TileMapData *data, Uint32 numCells);
 */
 void FillMapTiles(TileMapData *data, TileMap * map);
 
-/*
-* @brief Handle collisions between entities and non-walkable tiles
-* in the overworld tilemap
-* @param self The tile that is being collided with
-* @param other The colliding entity
-*/
-Bool EntityTileTouch(Tile *self, Entity *other);
 #endif

@@ -73,6 +73,8 @@ int main(int agrc, char *arg[])
 
 		EntityUpdateAll();
 
+		MapUpdate(GetCurrentTileMap());
+
 		CameraMove(GetPlayerEntity());
 
 		DrawMap(GetCurrentTileMap(), CameraMove(GetPlayerEntity()));

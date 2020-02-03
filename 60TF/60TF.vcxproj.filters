@@ -48,9 +48,6 @@
     <ClCompile Include="source\gf2d_draw.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\input.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\animations.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -67,6 +64,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\player.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\camera.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -101,9 +101,6 @@
     <ClInclude Include="include\gf2d_shape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\input.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\animations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -123,6 +120,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

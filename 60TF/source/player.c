@@ -147,7 +147,7 @@ void PlayerUpdate(Entity *self)
 				EntityNextAnimation(player.self, State_Idle);
 			}
 		}
-	}	
+	}
 }
 
 void SetInputState(PlayerInput state)

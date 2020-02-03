@@ -1,22 +1,115 @@
-﻿Build started 1/22/2020 9:58:03 PM.
-     1>Project "D:\MyDocuments\GF2D Work\60TF\60TF\60TF.vcxproj" on node 2 (Build target(s)).
+﻿Build started 2/2/2020 11:28:01 PM.
+     1>Project "C:\Users\sapph\Documents\60TF\60TF\60TF.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt source\entity.c
-         entity.c
-     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(35): warning C4113: 'void (__cdecl *)()' differs in parameter lists from 'void (__cdecl *)(void)'
-     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(38): warning C4113: 'void (__cdecl *)()' differs in parameter lists from 'void (__cdecl *)(void)'
-     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(61): warning C4018: '<' : signed/unsigned mismatch
-     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(87): warning C4113: 'void (__cdecl *)(Entity *)' differs in parameter lists from 'void (__cdecl *)(TileMap *,Entity_S *)'
-     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(117): warning C4244: 'function' : conversion from 'float' to 'Uint32', possible loss of data
-     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(127): warning C4018: '<' : signed/unsigned mismatch
-     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(171): warning C4018: '<' : signed/unsigned mismatch
-     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(188): warning C4018: '<' : signed/unsigned mismatch
-     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(214): warning C4018: '<' : signed/unsigned mismatch
-     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(223): warning C4018: '<' : signed/unsigned mismatch
-     1>d:\mydocuments\gf2d work\60tf\60tf\source\entity.c(236): warning C4101: 'i' : unreferenced local variable
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt source\tilemap.c
+         tilemap.c
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(53): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(71): warning C4029: declared formal parameter list different from definition
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(82): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(109): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(115): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(117): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(132): warning C4133: '=' : incompatible types - from 'List *' to 'Entity *'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(140): warning C4029: declared formal parameter list different from definition
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(175): warning C4020: 'FillMapTiles' : too many actual parameters
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(184): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(185): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(192): warning C4090: 'function' : different 'const' qualifiers
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(193): warning C4090: 'function' : different 'const' qualifiers
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(194): warning C4090: 'function' : different 'const' qualifiers
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(145): warning C4101: 'y' : unreferenced local variable
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(145): warning C4101: 'x' : unreferenced local variable
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(146): warning C4101: 'i' : unreferenced local variable
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(144): warning C4101: 'temp' : unreferenced local variable
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(141): warning C4101: 'file' : unreferenced local variable
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(145): warning C4101: 'ite' : unreferenced local variable
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(143): warning C4101: 'buf' : unreferenced local variable
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(146): warning C4101: 'j' : unreferenced local variable
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(204): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(206): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(214): warning C4133: 'function' : incompatible types - from 'char *' to 'Sprite *'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(215): warning C4133: 'function' : incompatible types - from 'SDL_Texture *' to 'Sprite *'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(219): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(247): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(249): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(265): warning C4047: 'function' : 'Sprite *' differs in levels of indirection from 'Sprite **'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(265): warning C4024: 'SpriteDelete' : different types for formal and actual parameter 1
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(282): warning C4047: 'function' : 'Sprite *' differs in levels of indirection from 'Sprite **'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(282): warning C4024: 'SpriteDelete' : different types for formal and actual parameter 1
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(293): warning C4029: declared formal parameter list different from definition
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(312): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(365): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(369): warning C4553: '==' : operator has no effect; did you intend '='?
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(380): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(382): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(388): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(422): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(211) : see declaration of 'fopen'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(451): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(304) : see declaration of 'sscanf'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(463): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(304) : see declaration of 'sscanf'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(471): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(304) : see declaration of 'sscanf'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(482): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(304) : see declaration of 'sscanf'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(493): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(304) : see declaration of 'sscanf'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(501): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(304) : see declaration of 'sscanf'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(509): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(304) : see declaration of 'sscanf'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(517): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(304) : see declaration of 'sscanf'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(522): warning C4090: 'function' : different 'const' qualifiers
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(524): warning C4090: 'function' : different 'const' qualifiers
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(524): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\string.h(195) : see declaration of 'strncpy'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(526): warning C4090: '=' : different 'const' qualifiers
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(532): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(304) : see declaration of 'sscanf'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(537): warning C4090: 'function' : different 'const' qualifiers
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(539): warning C4090: 'function' : different 'const' qualifiers
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(539): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\string.h(195) : see declaration of 'strncpy'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(541): warning C4090: '=' : different 'const' qualifiers
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(547): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(304) : see declaration of 'sscanf'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(554): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\string.h(195) : see declaration of 'strncpy'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(560): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(304) : see declaration of 'sscanf'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(565): warning C4090: 'function' : different 'const' qualifiers
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(567): warning C4090: 'function' : different 'const' qualifiers
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(567): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\string.h(195) : see declaration of 'strncpy'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(590): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(211) : see declaration of 'fopen'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(596): warning C4098: 'ParseTileColors' : 'void' function returning a value
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(620): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(304) : see declaration of 'sscanf'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(622): warning C4018: '>=' : signed/unsigned mismatch
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(622): warning C4047: '==' : 'char [512]' differs in levels of indirection from 'int'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(629): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(304) : see declaration of 'sscanf'
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(585): warning C4101: 'tempBuf' : unreferenced local variable
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(644): warning C4029: declared formal parameter list different from definition
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(656): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(658): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(660): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(675): warning C4244: 'function' : conversion from 'Uint32' to 'float', possible loss of data
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(676): warning C4244: 'function' : conversion from 'Uint32' to 'float', possible loss of data
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(677): warning C4244: 'function' : conversion from 'Uint32' to 'float', possible loss of data
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(678): warning C4244: 'function' : conversion from 'Uint32' to 'float', possible loss of data
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(706): warning C4244: 'function' : conversion from 'Uint32' to 'float', possible loss of data
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(707): warning C4244: 'function' : conversion from 'Uint32' to 'float', possible loss of data
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(708): warning C4244: 'function' : conversion from 'Uint32' to 'float', possible loss of data
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(709): warning C4244: 'function' : conversion from 'Uint32' to 'float', possible loss of data
+     1>c:\users\sapph\documents\60tf\60tf\source\tilemap.c(319): warning C4715: 'GetCurrentTileMap' : not all control paths return a value
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\MyDocuments\GF2D Work\60TF\Debug\60TF.exe" /INCREMENTAL /NOLOGO SDL2.lib SDL2main.lib SDL2_image.lib SDL2_mixer.lib SDL2_ttf.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\MyDocuments\GF2D Work\60TF\Debug\60TF.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\MyDocuments\GF2D Work\60TF\Debug\60TF.lib" /MACHINE:X86 Debug\actor.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\sapph\Documents\60TF\Debug\60TF.exe" /INCREMENTAL /NOLOGO SDL2.lib SDL2main.lib SDL2_image.lib SDL2_mixer.lib SDL2_ttf.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\sapph\Documents\60TF\Debug\60TF.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\sapph\Documents\60TF\Debug\60TF.lib" /MACHINE:X86 Debug\actor.obj
          Debug\animations.obj
+         Debug\camera.obj
          Debug\entity.obj
          Debug\game.obj
          Debug\gameworld.obj
@@ -28,14 +121,13 @@
          Debug\gf2d_vector.obj
          Debug\graphics.obj
          Debug\gui.obj
-         Debug\input.obj
          Debug\player.obj
          Debug\simple_logger.obj
          Debug\sprites.obj
          Debug\tilemap.obj
-         60TF.vcxproj -> D:\MyDocuments\GF2D Work\60TF\Debug\60TF.exe
-     1>Done Building Project "D:\MyDocuments\GF2D Work\60TF\60TF\60TF.vcxproj" (Build target(s)).
+         60TF.vcxproj -> C:\Users\sapph\Documents\60TF\Debug\60TF.exe
+     1>Done Building Project "C:\Users\sapph\Documents\60TF\60TF\60TF.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.31
+Time Elapsed 00:00:00.73

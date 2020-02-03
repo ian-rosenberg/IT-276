@@ -41,8 +41,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\SDL2_image-2.0.4\include;C:\SDL2-2.0.9\include;C:\SDL2_mixer-2.0.4\include;C:\SDL2_ttf-2.0.15\include;D:\MyDocuments\GF2D Work\60TF\60TF\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);C:\SDL2-2.0.9\lib\x86;C:\SDL2_image-2.0.4\lib\x86;C:\SDL2_mixer-2.0.4\lib\x86;C:\SDL2_ttf-2.0.15\lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\SDL2_image-2.0.5\include;C:\SDL2-2.0.10\include;C:\SDL2_mixer-2.0.4\include;C:\SDL2_ttf-2.0.15\include;C:\Users\sapph\Documents\60TF\60TF\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);C:\SDL2-2.0.10\lib\x86;C:\SDL2_image-2.0.5\lib\x86;C:\SDL2_mixer-2.0.4\lib\x86;C:\SDL2_ttf-2.0.15\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -86,6 +86,7 @@
   <ItemGroup>
     <ClCompile Include="source\actor.c" />
     <ClCompile Include="source\animations.c" />
+    <ClCompile Include="source\camera.c" />
     <ClCompile Include="source\entity.c" />
     <ClCompile Include="source\game.c" />
     <ClCompile Include="source\gameworld.c" />
@@ -97,7 +98,6 @@
     <ClCompile Include="source\gf2d_vector.c" />
     <ClCompile Include="source\graphics.c" />
     <ClCompile Include="source\gui.c" />
-    <ClCompile Include="source\input.c" />
     <ClCompile Include="source\player.c" />
     <ClCompile Include="source\simple_logger.c" />
     <ClCompile Include="source\sprites.c" />
@@ -106,6 +106,7 @@
   <ItemGroup>
     <ClInclude Include="include\actor.h" />
     <ClInclude Include="include\animations.h" />
+    <ClInclude Include="include\camera.h" />
     <ClInclude Include="include\entity.h" />
     <ClInclude Include="include\gameworld.h" />
     <ClInclude Include="include\gf2d_color.h" />
@@ -117,7 +118,6 @@
     <ClInclude Include="include\gf2d_vector.h" />
     <ClInclude Include="include\graphics.h" />
     <ClInclude Include="include\gui.h" />
-    <ClInclude Include="include\input.h" />
     <ClInclude Include="include\player.h" />
     <ClInclude Include="include\simple_logger.h" />
     <ClInclude Include="include\sprites.h" />

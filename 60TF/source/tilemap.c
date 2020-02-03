@@ -99,6 +99,7 @@ TileMap* NewTileMap(Uint32 width, Uint32 height)
 	map->_inUse = 1;
 	map->currentTileFilled = vector2d(-1, -1);
 	map->numColumns = width;
+	map->numBlockingTiles = 0;
 	map->numRows = height;
 	map->mapName = malloc(sizeof(char)* GF2DWORDLEN);
 
@@ -374,7 +375,32 @@ void MapRemoveEntity(TileMap *map, Entity *ent)
 
 void MapUpdate(TileMap *map)
 {
+	int i, j, k;
 
+	for (i = 0; i < map->numColumns; i++)
+	{
+		for (j = 0; j < map->numRows; i++)
+		{
+			if (&map->map[i][j] != NULL)
+			{
+				if (map->map[i][j].walkable == false)
+				{
+					for (k = 0; k < map->numEnts; k++)
+					{
+
+						if (EntityTileTouch(&map->map[i][j].boundingBox, &map->ents[k]))
+						{
+							Vector2D negV = map->ents[k].velocity;
+							
+							vector2d_negate(negV, map->ents[k].velocity);
+
+							vector2d_add(map->ents[k].position, map->ents[k].position, negV);
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 
@@ -641,10 +667,15 @@ void FillMapTiles(TileMapData *data, TileMap * map, Bool gravity)
 								map->map[y][x].active = false;
 
 								map->map[y][x].filled = 1;
-
+								map->map[y][x].walkable = false;
 								map->map[y][x].offsetInColumn = -1;
 
 								map->map[y][x].sprite = map->mapSpriteSheet;
+								
+								map->map[y][x].boundingBox = gf2d_rect(x * map->cellWidth, 
+									y * map->cellHeight, 
+									map->cellWidth, 
+									map->cellHeight);
 
 								map->currentTileFilled.x++;
 								map->currentTileFilled.y++;
@@ -671,6 +702,7 @@ void FillMapTiles(TileMapData *data, TileMap * map, Bool gravity)
 								if (map->map[y][x].offsetInColumn != GROUND_CENTER_1 && map->map[y][x].offsetInColumn != GROUND_CENTER_2 && map->map[y][x].offsetInColumn != INSIDE_CENTER_WALKABLE)
 								{
 									map->map[y][x].walkable = false;
+									map->numBlockingTiles++;
 									map->map[y][x].boundingBox = gf2d_rect(x * map->cellWidth,
 										y * map->cellHeight,
 										map->cellWidth,
@@ -686,15 +718,3 @@ void FillMapTiles(TileMapData *data, TileMap * map, Bool gravity)
 		}
 }
 
-Bool EntityTileTouch(Tile *self, Entity *other)
-{
-	if (self->boundingBox.x < other->boundingBox.x + other->actor->currentAnimation->sprite->width &&
-		self->boundingBox.x + self->boundingBox.x > other->boundingBox.x &&
-		self->boundingBox.y < other->boundingBox.y + other->actor->currentAnimation->sprite->height &&
-		other->boundingBox.y + other->actor->currentAnimation->sprite->height > other->boundingBox.y)
-	{
-		return true;
-	}
-
-	return false;
-}

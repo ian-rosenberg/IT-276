@@ -86,6 +86,14 @@ void EntityFree(Entity *self);
 * @param other The rhs entity
 */
 Bool EntityEntityTouch(Entity *self, Entity *other);
+/*
+* @brief Handle collisions between entities and non-walkable tiles
+* in the overworld tilemap
+* @param self The tile that is being collided with
+* @param other The colliding entity
+*/
+Bool EntityTileTouch(Rect *self, Entity *other);
+
 
 /**
 * @brief Render all entites to screen

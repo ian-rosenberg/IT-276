@@ -239,6 +239,21 @@ Bool EntityEntityTouch(Entity *self, Entity *other)
 	return false;
 }
 
+Bool EntityTileTouch(Rect *tile, Entity *other)
+{
+	if (tile->x < other->boundingBox.x + other->actor->currentAnimation->sprite->width &&
+		tile->x + tile->x > other->boundingBox.x &&
+		tile->y < other->boundingBox.y + other->actor->currentAnimation->sprite->height &&
+		other->boundingBox.y + other->actor->currentAnimation->sprite->height > other->boundingBox.y)
+	{
+		slog("Entity %s touched a tile at (%f,%f)", other->actor->name, tile->x, tile->y);
+
+		return true;
+	}
+
+	return false;
+}
+
 Entity* GetEntityByID(Uint32 id)
 {
 	int i;
