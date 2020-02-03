@@ -2,8 +2,11 @@
 #include "graphics.h"
 #include "player.h"
 
-#define TOLERANCE 32
 #define BOUNDS_PERCENT 0.30
+#define DAMPING 6
+#define STIFFNESS 5
+#define MASS 1
+#define MAX_FOLLOW_DISTANCE 100
 
 static Camera cam = { 0 };
 
@@ -35,13 +38,6 @@ Vector2D CameraMove(Entity *pEnt)
 
 	cam.distToPlayer = vector2d_magnitude_between(pEnt->position, cam.position);
 
-	if (cam.distToPlayer > vector2d_magnitude(cam.viewport))
-	{
-		cam.velocity = pEnt->velocity;
-		
-		vector2d_scale(cam.velocity, cam.velocity, GetFrameDelay() * TOLERANCE);
-	}
-
 	if (cam.position.x < 0)
 	{
 		cam.position.x = 0;
@@ -59,19 +55,5 @@ Vector2D CameraMove(Entity *pEnt)
 		cam.position.y = cam.levelBounds.x - cam.viewport.y;
 	}
 
-	if (cam.velocity.x != 0 || cam.velocity.y != 0)
-	{
-		vector2d_add(cam.position, cam.position, cam.velocity);
-	}
-
 	return cam.position;
-}
-
-Vector2D GetCameraOffset(Vector2D pPos)
-{
-	Vector2D result;
-	
-	vector2d_sub(result, pPos, cam.position);
-
-	return result;
 }

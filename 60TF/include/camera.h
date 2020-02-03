@@ -1,3 +1,6 @@
+#ifndef __CAMERA__
+#define __CAMERA__
+
 #include "gf2d_shape.h"
 #include "gf2d_vector.h"
 #include "entity.h"
@@ -21,4 +24,4 @@ Vector2D GetCameraPosition();
 
 Vector2D CameraMove(Entity *pEnt);
 
-Vector2D GetCameraOffset(Vector2D pPos);
+#endif

@@ -26,10 +26,10 @@ typedef enum
 */
 typedef struct Animation_S
 {
-	const char		*name;
-	const char		*filepath;
-
 	Sprite			*sprite;
+	
+	Uint8			_inUse;
+	Uint8			_refCount;
 
 	Uint32			length;
 	float			currentFrame;
@@ -40,7 +40,17 @@ typedef struct Animation_S
 	float			frameRate;
 
 	AnimationType	animType;
+	
+	const char		*name;
+	const char		*filepath;
+
 }Animation;
+
+/*
+* @brief Initialize the animation manager
+* @param max The max number of animations to allocate for
+*/
+void AnimationManagerInit(Uint32 max);
 
 /*
 * @brief Delete an animation
@@ -50,9 +60,10 @@ void DeleteAnimation(Animation *animList);
 
 /**
 * @brief Get a new animation list
+* @param numAnim The number of aniamtions to allocate for
 * @returns an unused/unreferenced animation list
 */
-Animation* NewAnimation();
+Animation* NewAnimation(Uint32 numAnim);
 
 /**
 * @brief Retrieve an animation by its name
@@ -77,5 +88,15 @@ int GetAnimationCount(FILE *file);
 AnimationReturnType AnimationNextFrame(
 	Animation *anim,
 	float *frame);
+
+/*
+* @brief Close the animation manager and free all associated memory
+*/
+void AnimationManagerClose();
+
+/*
+* @brief Clear all animations in the manager
+*/
+void ClearAllAnimations();
 
 #endif

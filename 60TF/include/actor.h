@@ -106,5 +106,5 @@ Vector2D GetAverageActorDimensions(Actor *actor);
 * @param filename File to extract data from
 * @returns A list of animations
 */
-Animation* ParseAnimation(const char* filename);
+Animation* ParseAnimation(const char* filename, Uint32 numAnim);
 #endif

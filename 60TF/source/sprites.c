@@ -30,6 +30,7 @@ void SpriteManagerInit(Uint32 max)
 		spriteManager.spriteList[i].filepath = malloc(sizeof(char)* GF2DLINELEN);
 		spriteManager.spriteList[i].surface = NULL;
 		spriteManager.spriteList[i].texture = NULL;
+		spriteManager.spriteList[i]._refCount = 0;
 	}
 
 	if (!(IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG) & IMG_INIT_PNG | IMG_INIT_JPG))
@@ -40,7 +41,7 @@ void SpriteManagerInit(Uint32 max)
 	slog("sprite system initialized");
 
 	atexit(IMG_Quit);
-	atexit(SpriteManagerClose);
+	//atexit(SpriteManagerClose);
 }
 
 Sprite* LoadImageToTexture(char *filepath, SDL_Renderer *ren)
@@ -152,15 +153,20 @@ void SpriteDelete(Sprite *sprite)
 		{
 			if (sprite->surface != NULL)
 			{
-				SDL_FreeSurface(spriteManager.spriteList[i].surface);
+				SDL_FreeSurface(sprite->surface);
+				sprite->surface = NULL;
 			}
 
 			if (sprite->texture != NULL)
 			{
-				SDL_DestroyTexture(spriteManager.spriteList[i].texture);
+				SDL_DestroyTexture(sprite->texture);
+				sprite->texture = NULL;
 			}
-			memset(spriteManager.spriteList[i].filepath, 0, sizeof(char)* GF2DLINELEN);
-			memset(&spriteManager.spriteList[i], 0, sizeof(Sprite));
+
+			if (sprite->filepath)
+			{
+				free(sprite->filepath);
+			}
 
 			return;
 		}
@@ -172,8 +178,6 @@ void SpriteManagerClose()
 	ClearAllSprites();
 
 	free(spriteManager.spriteList);
-
-	memset(&spriteManager, 0, sizeof(SpriteManager));
 }
 
 void DrawSprite(Sprite *sprite,
