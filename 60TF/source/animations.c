@@ -5,29 +5,94 @@
 #include "graphics.h"
 
 
+typedef struct
+{
+	Uint32 maxAnim;
+	Animation *animList;
+}AnimationManager;
+
+static AnimationManager animationManager = { 0 };
+
+void AnimationManagerInit(Uint32 max)
+{
+	int i = 0;
+
+	if (max < 1)
+	{
+		slog("Cant allocate 0 animations");
+		return;
+	}
+
+	animationManager.maxAnim = max;
+	animationManager.animList = malloc(max * sizeof(Animation));
+
+	memset(animationManager.animList, 0, sizeof(Animation)*max);
+
+	for (; i < animationManager.maxAnim; i++)
+	{
+		animationManager.animList[i].name = malloc(sizeof(char)* GF2DWORDLEN);
+		animationManager.animList[i].filepath = malloc(sizeof(char)* GF2DLINELEN);
+		animationManager.animList[i].sprite = NewSprite();
+		animationManager.animList[i]._refCount = 0;
+		animationManager.animList[i]._inUse = 0;
+		animationManager.animList[i].length = 0;
+		animationManager.animList[i].currentFrame = 0;
+		animationManager.animList[i].cellWidth = 0;
+		animationManager.animList[i].cellHeight = 0;
+		animationManager.animList[i].yOffset = 0;
+		animationManager.animList[i].colorSpecial = vector4d(0, 0, 0, 0);
+		animationManager.animList[i].frameRate = 0;
+		animationManager.animList[i].animType = 0;
+	}
+
+	slog("animation system initialized");
+}
+
 void DeleteAnimation(Animation *animList)
 {
-	if (!animList)
+	int i = 0;
+	Animation *anim = NULL;
+
+	for (; i < animationManager.maxAnim; ++i)
+	{
+		if (&animationManager.animList[i] == animList)
+		{
+			anim = &animationManager.animList[i];
+		}
+	}
+	
+	if (anim == NULL)
 	{
 		return;
 	}
 
-	if (animList->sprite != NULL)
+	if (anim->sprite != NULL)
 	{
-		SpriteDelete(animList->sprite);
+		SpriteDelete(anim->sprite);
 	}
 
-	free(animList->filepath);
-	free(animList->name);
-	free(animList);
+	if (animList->filepath != NULL)
+	{
+		memset(anim->filepath, 0, sizeof(char)* GF2DLINELEN);
+	}
+	if (animList->name != NULL)
+	{
+		memset(anim->name, 0, sizeof(char) * GF2DWORDLEN);
+	}
 }
 
 Animation* NewAnimation()
 {
-	Animation *anim = NULL;
+	int i = 0;
+	Animation *anim;
 
-	anim = malloc(sizeof(Animation));
-	memset(anim, 0, sizeof(Animation));
+	for (; i < animationManager.maxAnim; ++i)
+	{
+		if (animationManager.animList[i]._inUse == 0 )
+		{
+			anim = &animationManager.animList[i];
+		}
+	}
 
 	if (!anim)
 	{
@@ -36,16 +101,24 @@ Animation* NewAnimation()
 		return;
 	}
 
+	memset(anim->sprite, 0, sizeof(Sprite));
+
+	anim->filepath = malloc(sizeof(char) * GF2DLINELEN);
+	memset(anim->filepath, 0, sizeof(char) * GF2DLINELEN);
+
+	anim->name = malloc(sizeof(char)* GF2DWORDLEN);
+	memset(anim->filepath, 0, sizeof(char)* GF2DWORDLEN);
+
 	anim->animType = 0;
 	anim->cellHeight = 0;
 	anim->cellWidth = 0;
 	anim->colorSpecial = vector4d(0, 0, 0, 0);
 	anim->currentFrame = 0.0f;
-	anim->filepath = malloc(sizeof(char) * GF2DLINELEN);
 	anim->frameRate = 0.0f;
 	anim->length = 0;
-	anim->name = malloc(sizeof(char)* GF2DWORDLEN);;
-	anim->sprite = NewSprite();
+	anim->_refCount++;
+	anim->_inUse = 1;
+
 
 	return anim;
 }
@@ -121,4 +194,34 @@ AnimationReturnType AnimationNextFrame(Animation *anim, float *frame)
 		}
 	}
 	return ART_INPROGRESS;
+}
+
+void ClearAllAnimations()
+{
+	int i = 0; 
+
+	for (; i < animationManager.maxAnim; ++i)
+	{
+		if (animationManager.animList[i].name != NULL)
+		{
+			free(animationManager.animList[i].name);
+		}
+		if (animationManager.animList[i].filepath != NULL)
+		{
+			free(animationManager.animList[i].filepath);
+		}
+		if (animationManager.animList[i].sprite != NULL)
+		{
+			SpriteDelete(animationManager.animList[i].sprite);
+		}
+		
+		free(&animationManager.animList[i]);
+	}
+}
+
+void AnimationManagerClose()
+{
+	ClearAllAnimations();
+
+	free(animationManager.animList);
 }

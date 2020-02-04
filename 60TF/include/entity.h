@@ -3,6 +3,7 @@
 
 #include "actor.h"
 #include "gf2d_shape.h"
+#include "camera.h"
 
 typedef struct Entity_S
 {
@@ -25,6 +26,7 @@ typedef struct Entity_S
 
 	Vector2D				velocity;
 	Vector2D				position;
+	Vector2D				drawPos;
 	Vector2D				scale;												/**<scale to draw sprite at*/
 	Vector3D				rotation;											/**<how to rotate the sprite*/
 	Vector2D				facing;												/**<direction the entity is facing*/
@@ -86,14 +88,6 @@ void EntityFree(Entity *self);
 * @param other The rhs entity
 */
 Bool EntityEntityTouch(Entity *self, Entity *other);
-/*
-* @brief Handle collisions between entities and non-walkable tiles
-* in the overworld tilemap
-* @param self The tile that is being collided with
-* @param other The colliding entity
-*/
-Bool EntityTileTouch(Rect *self, Entity *other);
-
 
 /**
 * @brief Render all entites to screen

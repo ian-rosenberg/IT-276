@@ -40,7 +40,7 @@ void GraphicsInit(Uint32 winWidth, Uint32 winHeight, Bool fullscreen, Uint32 fDe
 
 	slog("SDL initialization success!");
 
-	atexit(SDL_Quit);
+	//atexit(SDL_Quit);
 
 	if (fullscreen)
 	{
@@ -122,7 +122,7 @@ void GraphicsInit(Uint32 winWidth, Uint32 winHeight, Bool fullscreen, Uint32 fDe
 
 	srand(SDL_GetTicks());
 
-	atexit(GraphicsClose);
+	//atexit(GraphicsClose);
 	slog("Graphics initialized successfully");
 }
 

@@ -20,7 +20,9 @@ Actor* NewActor(Uint32 numAnim)
 
 	act = (Actor*)malloc(sizeof(Actor));
 	memset(act, 0, sizeof(Actor));
-	act->animations = NewAnimation();
+
+	act->animations = NewAnimation(numAnim);
+	
 	slog("using new actor");
 	act->_inUse = 1;
 	act->animState = 0;
@@ -213,7 +215,7 @@ Actor* LoadActor(const char *filename)
 			{
 				sscanf(fileContents, " %s\n%n", tempBuf, &n);
 
-				actor->animations[i] = *ParseAnimation(tempBuf);
+				actor->animations[i] = *ParseAnimation(tempBuf, i);
 				
 				fileContents += n;
 				bufLen += n;
@@ -252,12 +254,11 @@ void FreeActor(Actor *actor)
 		return;
 	}
 	
-	for (i = 0; i < actor->numAnimations; ++i)
+	for (i = actor->numAnimations - 1; i > 0; --i)
 	{
 		DeleteAnimation(&actor->animations[i]);
 	}
 
-	SpriteDelete(actor->currentSprite);
 	DeleteAnimation(actor->currentAnimation);
 	DeleteAnimation(actor->animations);
 	free(actor->name);
@@ -286,12 +287,12 @@ Vector2D GetAverageActorDimensions(Actor *actor)
 	return avgDim;
 }
 
-Animation* ParseAnimation(const char* filename)
+Animation* ParseAnimation(const char* filename, Uint32 numAnim)
 {
 	FILE * file = NULL;
 	char buf[GF2DTEXTLEN];
 	char *tempBuf[GF2DTEXTLEN];
-	char *tempData[GF2DTEXTLEN];
+	char *tempData[GF2DTEXTLEN]; 
 
 	int i = 0, n = 0, bufLen = 0;
 	Uint32 iteFlag = 0;
@@ -300,7 +301,7 @@ Animation* ParseAnimation(const char* filename)
 	char *fC = NULL;
 	Uint32 fileSize = 0;
 
-	anim = NewAnimation();
+	anim = NewAnimation(numAnim);
 
 	file = fopen(filename, "r");
 

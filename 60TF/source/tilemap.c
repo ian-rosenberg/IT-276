@@ -19,6 +19,8 @@
 #define WALKABLE_BLOCK2 18
 #define WALKABLE_BLOCK3 19
 
+#define NUM_ENTITIES 512
+
 char* overworldTileNames[TILE_TYPES] = { "GROUND", "INSIDE", "BUILDING" };
 
 typedef enum
@@ -63,7 +65,7 @@ void TileMapManagerInit(Uint32 max)
 		tilemapManager.tilemaps[i].backgroundImage = NULL;
 		tilemapManager.tilemaps[i].backgroundMusic = NULL;
 		tilemapManager.tilemaps[i].renderTarget = NULL;
-
+		tilemapManager.tilemaps[i].mapSpriteSheet = NULL;
 	}
 }
 
@@ -99,9 +101,10 @@ TileMap* NewTileMap(Uint32 width, Uint32 height)
 	map->_inUse = 1;
 	map->currentTileFilled = vector2d(-1, -1);
 	map->numColumns = width;
-	map->numBlockingTiles = 0;
 	map->numRows = height;
 	map->mapName = malloc(sizeof(char)* GF2DWORDLEN);
+	map->ents = malloc(sizeof(Entity*)* NUM_ENTITIES);
+	map->numEnts = 0;
 
 	map->map = malloc(sizeof(Tile*) * height);
 	memset(map->map, 0, sizeof(Tile*) * height);
@@ -123,13 +126,12 @@ TileMap* NewTileMap(Uint32 width, Uint32 height)
 			map->map[y][x]._refCount = 1;
 			map->map[y][x].active = 0;
 			map->map[y][x].walkable = 0;
-			map->map[y][x].boundingBox = gf2d_rect(0, 0, 0, 0);
+			map->map[y][x].boundingBox = gf2d_rect(x * width, y * height, width, height);
 		}
 	}
 
 	map->renderTarget = NULL;
-	map->numEnts = 0;
-	map->ents = gf2d_list_new();
+	map->ents = gf2d_list_new_size(NUM_ENTITIES);
 
 	map->active = 1;
 
@@ -221,6 +223,9 @@ void TileMapDelete(TileMap *map)
 		EntityFree(&map->ents[i]);
 	}
 
+	free(map->ents);
+
+
 	free(map->shelterPositions);
 	free(map->mapName);
 	free(map->emptyTileFileName);
@@ -235,7 +240,7 @@ void RenderMapToTexture(TileMap *map)
 	Vector2D scaleCenter;
 	Vector2D flip;
 	Vector3D rot = { 0, 0, 0 };
-	Vector4D alpha = { 0,0,0,1 };
+	Vector4D alpha = { 1,1,1,1 };
 	int x, y;
 	
 	scale = vector2d(1, 1);
@@ -299,8 +304,6 @@ void DrawMap(TileMap *map, Vector2D camPos)
 	
 	s.texture = map->renderTarget;
 
-	slog("Camera coords (%f, %f)", camPos.x, camPos.y);
-
 	DrawSprite(&s, resultPos, &one, NULL, NULL, NULL, NULL, 0, 0, map->boundingBox.w, map->boundingBox.h);
 
 }
@@ -321,6 +324,7 @@ TileMap* GetCurrentTileMap()
 Bool AddEntityToCurrentTileMap(Entity *ent)
 {
 	TileMap *map = GetCurrentTileMap();
+	int i;
 	
 	if (!ent)
 	{
@@ -334,21 +338,22 @@ Bool AddEntityToCurrentTileMap(Entity *ent)
 
 	if (map->ents == NULL)
 	{
-		//map->ents = gf2d_list_new();
+		return false;
 	}
 	else
 	{
-		//map->ents = gf2d_list_append(map->ents, ent);
+		for (i = 0; i < NUM_ENTITIES; i++)
+		{
+			if (map->ents[i]->_inUse == 0)
+			{
+				map->ents[i] = ent;
+
+				map->numEnts++;
+
+				return true;
+			}
+		}
 	}
-
-	/*if (ent == GetPlayerEntity())
-	{
-		SetPlayerGravity();
-	}*/
-
-	map->numEnts++;
-
-	return true;
 }
 
 Vector2D GetCurrentTileMapDimensions(TileMap *map)
@@ -364,37 +369,41 @@ void MapRemoveEntity(TileMap *map, Entity *ent)
 
 	for (; i < map->numEnts; i++)
 	{
-		if (&map->ents[i] == ent)
+		if ((map->ents[i]) == ent)
 		{
-			&map->ents[i] == NULL;
+			map->ents[i] = NULL;
 		}
 	}
-
-	map->numEnts--;
 }
 
 void MapUpdate(TileMap *map)
 {
-	int i, j, k;
+	Uint32 i;
+	Uint32 j;
+	Uint32 k;
 
-	for (i = 0; i < map->numColumns; i++)
+	for (i = 0; i < map->numRows; i++)
 	{
-		for (j = 0; j < map->numRows; i++)
+		for(j = 0; j < map->numColumns; j++)
 		{
 			if (&map->map[i][j] != NULL)
-			{
-				if (map->map[i][j].walkable == false)
+			{				
+				if (map->map[i][j].walkable == 0)
 				{
+					Vector2D result = { 0 };
+					result.x = map->map[i][j].boundingBox.x - GetCameraPosition().x;
+					result.y = map->map[i][j].boundingBox.y - GetCameraPosition().y;
+					gf2d_rect_draw(map->map[i][j].boundingBox, gf2d_color(0, 1, 0, 1));
+
 					for (k = 0; k < map->numEnts; k++)
 					{
-
-						if (EntityTileTouch(&map->map[i][j].boundingBox, &map->ents[k]))
+						if (TileEntityTouch(map->map[i][j].boundingBox, map->ents[k]))
 						{
-							Vector2D negV = map->ents[k].velocity;
+							Vector2D negV = map->ents[k]->velocity;
 							
-							vector2d_negate(negV, map->ents[k].velocity);
+							vector2d_negate(negV, map->ents[k]->velocity);
 
-							vector2d_add(map->ents[k].position, map->ents[k].position, negV);
+							vector2d_add(map->ents[k]->position, map->ents[k]->position, negV);
 						}
 					}
 				}
@@ -667,15 +676,9 @@ void FillMapTiles(TileMapData *data, TileMap * map, Bool gravity)
 								map->map[y][x].active = false;
 
 								map->map[y][x].filled = 1;
-								map->map[y][x].walkable = false;
 								map->map[y][x].offsetInColumn = -1;
 
 								map->map[y][x].sprite = map->mapSpriteSheet;
-								
-								map->map[y][x].boundingBox = gf2d_rect(x * map->cellWidth, 
-									y * map->cellHeight, 
-									map->cellWidth, 
-									map->cellHeight);
 
 								map->currentTileFilled.x++;
 								map->currentTileFilled.y++;
@@ -702,11 +705,7 @@ void FillMapTiles(TileMapData *data, TileMap * map, Bool gravity)
 								if (map->map[y][x].offsetInColumn != GROUND_CENTER_1 && map->map[y][x].offsetInColumn != GROUND_CENTER_2 && map->map[y][x].offsetInColumn != INSIDE_CENTER_WALKABLE)
 								{
 									map->map[y][x].walkable = false;
-									map->numBlockingTiles++;
-									map->map[y][x].boundingBox = gf2d_rect(x * map->cellWidth,
-										y * map->cellHeight,
-										map->cellWidth,
-										map->cellHeight);
+									gf2d_rect_set(map->map[y][x].boundingBox, x * map->cellWidth, y * map->cellHeight, map->cellWidth, map->cellHeight);
 								}
 
 								continue;
@@ -716,5 +715,20 @@ void FillMapTiles(TileMapData *data, TileMap * map, Bool gravity)
 				}
 			}
 		}
+}
+
+Bool TileEntityTouch(Rect tile, Entity *self)
+{
+	Vector2D dir = { 0 };
+	Vector2D poc = { 0 };
+
+	if (gf2d_rect_overlap_poc(self->boundingBox, tile, &poc, &dir))
+	{
+		slog("Collision occurred @ (%f,%f)", poc.x, poc.y);
+
+		return true;
+	}
+
+	return false;
 }
 

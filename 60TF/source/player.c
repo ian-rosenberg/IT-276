@@ -1,6 +1,5 @@
 #include "player.h"
 #include "graphics.h"
-#include "camera.h"
 
 #define PLAYER_SPEED 5
 #define PLAYER_ACCELERATION 0.25
@@ -61,10 +60,13 @@ void PlayerInit()
 	player.plannedMovement = vector2d(0, 0);
 	player.self->velocity = vector2d(0, 0);
 
-	player.self->position = vector2d(200, 200);
+	player.self->position = vector2d(250, 200);
+	player.self->boundingBox.x = player.self->boundingBox.x;
+	player.self->boundingBox.y = player.self->boundingBox.y;
 
 	player.self->maxSpeed = PLAYER_SPEED;
 	player.self->speed = 0;
+	player.self->team = 1;
 
 	player.self->actor->currentAnimation = GetAnimationByName(pActor->animations, 
 		pActor->numAnimations, 
@@ -147,7 +149,7 @@ void PlayerUpdate(Entity *self)
 				EntityNextAnimation(player.self, State_Idle);
 			}
 		}
-	}
+	}	
 }
 
 void SetInputState(PlayerInput state)
@@ -187,11 +189,11 @@ void MovePlayerTopDown()
 {
 	if (player.plannedMovement.x != 0)
 	{
-		player.self->position.x += PLAYER_ACCELERATION * GetFrameDelay() * player.plannedMovement.x;
+		player.self->position.x += player.plannedMovement.x * PLAYER_SPEED;
 	}
 	if (player.plannedMovement.y != 0)
 	{
-		player.self->position.y += PLAYER_ACCELERATION * GetFrameDelay() * player.plannedMovement.y;
+		player.self->position.y += player.plannedMovement.y * PLAYER_SPEED;
 	}
 }
 
@@ -209,15 +211,16 @@ void PlayerDraw(Entity *self)
 		self->actor->color = vector4d(SDL_MAX_UINT8, SDL_MAX_UINT8, SDL_MAX_UINT8, SDL_MAX_UINT8);
 	}
 
-	centerScalePoint = vector2d(self->actor->currentAnimation->cellWidth / 2.0f,
-		self->actor->currentAnimation->cellHeight / 2.0f);
-
 	vector2d_sub(resultPos, self->position, GetCameraPosition());
+
+	self->boundingBox = gf2d_rect(self->position.x, self->position.y, self->actor->currentSprite->width, self->actor->currentSprite->height);
+
+	gf2d_rect_draw(gf2d_rect(resultPos.x, resultPos.y, self->actor->currentAnimation->cellWidth, self->actor->currentAnimation->cellHeight), gf2d_color(0, 0, 1, 1));
 
 	DrawSprite(self->actor->currentSprite,
 		resultPos,
 		&self->scale,
-		&centerScalePoint,
+		NULL,
 		&self->rotation,
 		&self->facing,
 		&self->actor->color,
@@ -225,6 +228,7 @@ void PlayerDraw(Entity *self)
 		self->actor->currentAnimation->yOffset,
 		self->actor->currentAnimation->cellWidth,
 		self->actor->currentAnimation->cellHeight);
+
 
 	self->actor->animState = AnimationNextFrame(self->actor->currentAnimation, &self->actor->currentAnimation->currentFrame);
 }

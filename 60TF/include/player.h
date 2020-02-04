@@ -56,7 +56,7 @@ void PlayerUpdate(Entity *self);
 void SetInputState(PlayerInput state);
 
 /**
-* @brief Move the player based on keyboard inputs
+* @brief Move the player based on keyboard inputs, no gravity applied
 */
 void MovePlayerTopDown();
 

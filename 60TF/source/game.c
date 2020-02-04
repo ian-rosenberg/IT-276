@@ -25,6 +25,9 @@ int main(int agrc, char *arg[])
 
 	GraphicsInit(1280, 720, 0, 16, bgcolor);
 	SpriteManagerInit(1024);
+
+	AnimationManagerInit(512);
+
 	gf2d_text_init("config/font.cfg");
 	GUISetupHUD();
 
@@ -35,6 +38,8 @@ int main(int agrc, char *arg[])
 	map = LoadTileMapFromFile("config/overworld.cfg");
 
 	PlayerInit();
+
+	AddEntityToCurrentTileMap(GetPlayerEntity());
 
 	CameraInit(GetPlayerEntity()->position, GetRenderDimensions(), vector2d(GetCurrentTileMap()->boundingBox.w, GetCurrentTileMap()->boundingBox.h));
 
@@ -75,9 +80,9 @@ int main(int agrc, char *arg[])
 
 		MapUpdate(GetCurrentTileMap());
 
-		CameraMove(GetPlayerEntity());
+		CameraMove(GetPlayerEntity()->position);
 
-		DrawMap(GetCurrentTileMap(), CameraMove(GetPlayerEntity()));
+		DrawMap(GetCurrentTileMap(), GetCameraPosition());
 
 		EntityDrawAll();
 		

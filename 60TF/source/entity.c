@@ -16,6 +16,8 @@ static EntityManager entityManager = { 0 };
 
 void EntityManagerInit(Uint32 maxEnt)
 {
+	int i;
+	
 	if (!maxEnt)
 	{
 		slog("Cant allocate 0 entities");
@@ -32,7 +34,7 @@ void EntityManagerInit(Uint32 maxEnt)
 		return;
 	}
 	entityManager.maxEntities = maxEnt;
-	atexit(EntityManagerClose);
+
 	slog("entity system initialized");
 
 	atexit(EntityManagerClose);
@@ -75,6 +77,7 @@ Entity* NewEntity(Actor* act)
 			ent->prevState = State_None;
 			ent->scale = act->scale;
 			ent->facing = vector2d(0, 0);
+			ent->team = 0;
 
 			ent->id = i;
 
@@ -89,8 +92,12 @@ Entity* NewEntity(Actor* act)
 			ent->Update = EntityUpdate;
 
 			ent->Free = EntityFree;
-			
-			++entityManager.numEntities;
+
+			ent->boundingBox = gf2d_rect(ent->position.x, ent->position.y,
+				ent->actor->currentAnimation->cellWidth, 
+				ent->actor->currentAnimation->cellHeight);
+
+			entityManager.numEntities++;
 
 			ent->actor->color = vector4d(1, 1, 1, 1);// no color shift, opaque
 			return ent;
@@ -165,11 +172,13 @@ void EntityUpdate(Entity *self)
 	if (self->dead)
 	{
 		EntityFree(self);
+
+		return;
 	}
 
 	if (self->Update != NULL)
 	{
-		self->Update(self);
+		self->Update(self);		
 	}
 }
 
@@ -228,25 +237,12 @@ void EntityFreeAll()
 
 Bool EntityEntityTouch(Entity *self, Entity *other)
 {
-	if (self->boundingBox.x < other->boundingBox.x + other->actor->currentAnimation->sprite->width &&
-		self->boundingBox.x + self->actor->currentAnimation->sprite->width > other->boundingBox.x &&
-		self->boundingBox.y < other->boundingBox.y + other->actor->currentAnimation->sprite->height &&
-		other->boundingBox.y + other->actor->currentAnimation->sprite->height > other->boundingBox.y)
-	{
-		return true;
-	}
+	Vector2D dir = { 0 };
+	Vector2D poc = { 0 };
 
-	return false;
-}
-
-Bool EntityTileTouch(Rect *tile, Entity *other)
-{
-	if (tile->x < other->boundingBox.x + other->actor->currentAnimation->sprite->width &&
-		tile->x + tile->x > other->boundingBox.x &&
-		tile->y < other->boundingBox.y + other->actor->currentAnimation->sprite->height &&
-		other->boundingBox.y + other->actor->currentAnimation->sprite->height > other->boundingBox.y)
+	if (gf2d_rect_overlap_poc(self->boundingBox, other->boundingBox, &poc, &dir))
 	{
-		slog("Entity %s touched a tile at (%f,%f)", other->actor->name, tile->x, tile->y);
+		slog("Collision occurred @ (%f,%f)", poc.x, poc.y);
 
 		return true;
 	}
